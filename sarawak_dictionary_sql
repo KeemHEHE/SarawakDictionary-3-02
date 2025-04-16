@@ -1,0 +1,13 @@
+CREATE TABLE sarawak_dictionary (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sarawak_word TEXT NOT NULL,
+    translation_en TEXT,
+    translation_bm TEXT,
+    dialect TEXT,
+    example_usage TEXT
+);
+
+INSERT INTO sarawak_dictionary (sarawak_word, translation_en, translation_bm, dialect, example_usage) VALUES
+('nyamai', 'delicious', 'sedap', 'Iban', 'Masak tu nyamai gilak'),
+('abuh', 'no / not', 'tidak', 'Bidayuh', 'Kamek abuh gi');
+
