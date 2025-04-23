@@ -1,0 +1,45 @@
+import pandas as pd
+
+# Create DataFrame based on user's input in tab-separated form
+data = [
+    (1, "nyamai", "sedap", "Iban"),
+    (2, "kamek", "awak", "Sarawak Malay"),
+    (4, "pandei", "pandai / bijak", "Sarawak Malay"),
+    (5, "ngiga", "mencari", "Iban"),
+    (6, "gerek", "best / seronok", "Sarawak Malay"),
+    (7, "bisi", "ada", "Iban"),
+    (8, "malasik", "comel / manja", "Bidayuh"),
+    (9, "bujang", "lelaki muda / belum kahwin", "Sarawak Malay"),
+    (10, "entauk", "bagi / untuk", "Iban"),
+    (11, "kelala", "lupa", "Bidayuh"),
+    (12, "mari", "marah", "Sarawak Malay"),
+    (13, "maok", "mahu / hendak", "Sarawak Malay"),
+]
+
+df_custom_words = pd.DataFrame(data, columns=["id", "word", "definition", "dialect"])
+
+import ace_tools as tools; tools.display_dataframe_to_user(name="Formatted Sarawak Dictionary Table", dataframe=df_custom_words)
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0

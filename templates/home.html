@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sarawak Dictionary</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e2f;
+            color: #f0f0f0;
+            padding: 40px;
+        }
+        h1 {
+            color: #00ccff;
+        }
+        input[type=text] {
+            padding: 10px;
+            width: 250px;
+            border-radius: 8px;
+            border: none;
+            margin-right: 10px;
+        }
+        button, .delete-btn {
+            padding: 10px 20px;
+            background-color: #00ccff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover, .delete-btn:hover {
+            background-color: #00b8e6;
+        }
+        table {
+            margin-top: 30px;
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #2a2a40;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background-color: #33334d;
+            color: #00ccff;
+        }
+        .add-form {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #444;
+        }
+        .delete-form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sarawak Dictionary</h1>
+    <form method="POST" action="/jawapan">
+        <input type="text" name="query" placeholder="Cari perkataan..." value="{{ query }}">
+
+        <button type="submit">
+            Cari
+        </button>
+    </form>
+
+    {% if results %}
+        <table>
+            <tr><th>Word</th><th>Definition</th><th>Dialect</th><th>Action</th></tr>
+            {% for row in results %}
+            <tr>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>
+                    <form method="POST" action="/delete" class="delete-form">
+                        <input type="hidden" name="id" value="{{ row[0] }}">
+                        <button type="submit" class="delete-btn">Padam</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% elif query %}
+        <p>Tiada hasil dijumpai untuk "{{ query }}".</p>
+    {% endif %}
+
+    <div class="add-form">
+        <h2>Tambah Perkataan Baru</h2>
+        <form method="POST" action="/add">
+            <input type="text" name="word" placeholder="Perkataan" required>
+            <input type="text" name="definition" placeholder="Maksud" required>
+            <input type="text" name="dialect" placeholder="Dialek" required>
+            <button type="submit">Tambah</button>
+        </form>
+    </div>
+</body>
+</html>
