@@ -34,7 +34,7 @@
             margin-top: 30px;
             width: 100%;
             border-collapse: collapse;
-            background-color: #2a2a40;
+            background-color: #17a0c3;
             border-radius: 8px;
             overflow: hidden;
         }
@@ -57,20 +57,101 @@
         }
     </style>
 </head>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      /* Navigation Bar Styles */
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+      }
+  
+      li {
+        float: left;
+      }
+  
+      li.right {
+        float: right;
+      }
+  
+      li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 50px;
+        text-decoration: none;
+      }
+  
+      li a:hover {
+        background-color: #111;
+      }
+  
+      /* Button Styles */
+      .btn {
+        padding: 10px 20px;
+        margin: 6px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        transition: background-color 0.3s ease;
+      }
+  
+      .btn:hover {
+        background-color: #3e8e41;
+      }
+  
+      .nav-button {
+        background: none;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+  
+    <ul>
+      <li><a class="active" href="#home">Home</a></li>
+      <li><a href="#news">News</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#more">More</a></li>
+  
+      <!-- Sign In and Sign Up Buttons on the Right -->
+      <li class="right nav-button">
+        <a href="signup.html">
+          <button class="btn">Sign Up</button>
+        </a>
+      </li>
+      <li class="right nav-button">
+        <a href="sign_in.html">
+          <button class="btn">Sign In</button>
+        </a>
+      </li>
+    </ul>
+  
+  </body>
+  </html>
+  
 <body>
     <h1>Sarawak Dictionary</h1>
     <form method="POST" action="/jawapan">
-        <input type="text" name="query" placeholder="Cari perkataan..." value="{{ query }}">
+        <input type="text" name="query" placeholder="Cari perkataan..." value="">
 
         <button type="submit">
             Cari
         </button>
     </form>
 
-    {% if results %}
+    
         <table>
             <tr><th>Word</th><th>Definition</th><th>Dialect</th><th>Action</th></tr>
-            {% for row in results %}
+
             <tr>
                 <td>{{ row[1] }}</td>
                 <td>{{ row[2] }}</td>
@@ -82,11 +163,11 @@
                     </form>
                 </td>
             </tr>
-            {% endfor %}
+            
         </table>
-    {% elif query %}
-        <p>Tiada hasil dijumpai untuk "{{ query }}".</p>
-    {% endif %}
+   
+        <p>Tiada hasil dijumpai untuk "".</p>
+    
 
     <div class="add-form">
         <h2>Tambah Perkataan Baru</h2>
