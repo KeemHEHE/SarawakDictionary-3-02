@@ -34,6 +34,11 @@ def add():
     conn.close()
     return redirect(url_for('index'))
 
+@app.route("/jawapan", methods=['POST'])
+def jawapan():
+    soal = request.form['query']
+    return render_template("jawapan.html", answer=soal)
+
 @app.route('/delete', methods=['POST'])
 def delete():
     word_id = request.form['id']
