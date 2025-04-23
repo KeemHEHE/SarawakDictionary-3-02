@@ -4,8 +4,7 @@ from flask import Flask, request, redirect, url_for, render_template
 app = Flask(__name__)
 
 # HTML template with delete option
-template = """
-"""
+
 
 @app.route('/', methods=['GET'])
 def index():
