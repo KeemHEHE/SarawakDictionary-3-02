@@ -1,5 +1,84 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      /* Navigation Bar Styles */
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+      }
+  
+      li {
+        float: left;
+      }
+  
+      li.right {
+        float: right;
+      }
+  
+      li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 50px;
+        text-decoration: none;
+      }
+  
+      li a:hover {
+        background-color: #111;
+      }
+  
+      /* Button Styles */
+      .btn {
+        padding: 10px 20px;
+        margin: 6px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        transition: background-color 0.3s ease;
+      }
+  
+      .btn:hover {
+        background-color: #3e8e41;
+      }
+  
+      .nav-button {
+        background: none;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+  
+    <ul>
+      <li><a class="active" href="#home">Home</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#favourites">Favourites</a></li>
+      <li><a href="#more">More</a></li>
+  
+      <!-- Sign In and Sign Up Buttons on the Right -->
+      <li class="right nav-button">
+        <a href="signup.html">
+          <button class="btn">Sign Up</button>
+        </a>
+      </li>
+      <li class="right nav-button">
+        <a href="sign_in.html">
+          <button class="btn">Sign In</button>
+        </a>
+      </li>
+    </ul>
+  
+  </body>
 <head>
   <title>Sign Up</title>
   <link rel="stylesheet" href="style.css">
