@@ -1,5 +1,10 @@
 import sqlite3
+<<<<<<< HEAD
 from flask import Flask, request, redirect, url_for, render_template, flash, session
+=======
+import click
+from flask import Flask, request, redirect, url_for, render_template, g, current_app, flash
+>>>>>>> 61ba5eb48ffc98b08a3b518e4b8c3dce3d56cbbc
 
 app = Flask(__name__)
 app.secret_key = "sarawakdictionary"
@@ -11,16 +16,20 @@ template = """
 @app.route('/', methods=['GET'])
 def index():
     query = request.args.get('query', '')
-    results = []
+    row = []
     conn = sqlite3.connect('sarawak_dictionary.db')
     cursor = conn.cursor()
     if query:
         cursor.execute("SELECT id, word, definition, dialect FROM words WHERE word LIKE ?", (f"%{query}%",))
     else:
         cursor.execute("SELECT id, word, definition, dialect FROM words")
-    results = cursor.fetchall()
+    rows = cursor.fetchall()
     conn.close()
+<<<<<<< HEAD
     return render_template("home.html", results=results)
+=======
+    return render_template("home.html", rows=rows)
+>>>>>>> 61ba5eb48ffc98b08a3b518e4b8c3dce3d56cbbc
 
 @app.route('/add', methods=['POST'])
 def add():
@@ -50,11 +59,35 @@ def delete():
     conn.close()
     return redirect(url_for('index'))
 
-# Setup for sign in and sign up button
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect('sarawak_dictionary.db')  # change name if needed
+    return g.db
+
+def close_db(e=None):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
 def init_db():
-    conn = sqlite3.connect('users.db')
-    conn.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)')
-    conn.close()
+    db = get_db()
+    with current_app.open_resource('schema.sql') as f:  # Make sure schema.sql exists
+        db.executescript(f.read().decode('utf8'))
+
+def close_db(e=None):
+    """Close the database again at the end of the request."""
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
+
+@click.command('init-db')
+def init_db_command():
+    """Clear the existing data and create new tables."""
+    init_db()
+    click.echo('Initialized the database.')
+
+def init_app(app):
+    app.teardown_appcontext(close_db)
+    app.cli.add_command(init_db_command)
 
 @app.route('/')
 def home():
@@ -119,6 +152,6 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
 
+init_app(app)
