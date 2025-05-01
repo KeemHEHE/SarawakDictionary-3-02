@@ -34,7 +34,7 @@
             margin-top: 30px;
             width: 100%;
             border-collapse: collapse;
-            background-color: #2a2a40;
+            background-color: #17a0c3;
             border-radius: 8px;
             overflow: hidden;
         }
@@ -55,19 +55,124 @@
         .delete-form {
             display: inline;
         }
+        .user-status {
+          float: right;
+          margin: 15px;
+          color: #333;
+        }
+        .flash-messages {
+          list-style: none;
+          padding: 10px;
+          margin: 10px 0;
+          background-color: #dff0d8;
+          border-left: 6px solid #4CAF50;
+          color: #3c763d;
+        }
     </style>
 </head>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      /* Navigation Bar Styles */
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+      }
+  
+      li {
+        float: left;
+      }
+  
+      li.right {
+        float: right;
+      }
+  
+      li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 50px;
+        text-decoration: none;
+      }
+  
+      li a:hover {
+        background-color: #111;
+      }
+  
+      /* Button Styles */
+      .btn {
+        padding: 10px 20px;
+        margin: 6px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        transition: background-color 0.3s ease;
+      }
+  
+      .btn:hover {
+        background-color: #3e8e41;
+      }
+  
+      .nav-button {
+        background: none;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+  
+    <ul>
+      <li><a class="active" href="#home">Home</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#favourites">Favourites</a></li>
+      <li><a href="#more">More</a></li>
+  
+      {% if session.get('logged_in') %}
+        <li class="right">
+          <a href="/logout">Logout ({{ session.get('username') }})</a>
+        </li>
+      {% else %}
+        <li class="right">
+          <a href="/signup">Sign Up</a>
+        </li>
+        <li class="right">
+          <a href="/login">Sign In</a>
+        </li>
+      {% endif %}
+    </ul>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+  </body>
+  </html>
+  
 <body>
     <h1>Sarawak Dictionary</h1>
     <form method="POST" action="/jawapan">
-        <input type="text" name="query" placeholder="Cari perkataan..." value="{{ query }}">
+        <input type="text" name="query" placeholder="Cari perkataan..." value="">
 
         <button type="submit">
             Cari
         </button>
     </form>
 
-    {% if results %}
+    
         <table>
             <tr><th>Word</th><th>Definition</th><th>Dialect</th><th>Action</th></tr>
             {% for row in results %}
@@ -84,9 +189,9 @@
             </tr>
             {% endfor %}
         </table>
-    {% elif query %}
-        <p>Tiada hasil dijumpai untuk "{{ query }}".</p>
-    {% endif %}
+   
+        <p>Tiada hasil dijumpai untuk "".</p>
+    
 
     <div class="add-form">
         <h2>Tambah Perkataan Baru</h2>
