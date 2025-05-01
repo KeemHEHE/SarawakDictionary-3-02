@@ -1,22 +1,17 @@
 import sqlite3
-<<<<<<< HEAD
-from flask import Flask, request, redirect, url_for, render_template, flash, session
-=======
 import click
-from flask import Flask, request, redirect, url_for, render_template, g, current_app, flash
->>>>>>> 61ba5eb48ffc98b08a3b518e4b8c3dce3d56cbbc
+from flask import Flask, request, redirect, url_for, render_template, flash, session, g, current_app
 
 app = Flask(__name__)
 app.secret_key = "sarawakdictionary"
 
-# HTML template with delete option
-template = """
-"""
-
 @app.route('/', methods=['GET'])
 def index():
+    # Only show dictionary content if logged in
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+        
     query = request.args.get('query', '')
-    row = []
     conn = sqlite3.connect('sarawak_dictionary.db')
     cursor = conn.cursor()
     if query:
@@ -25,11 +20,7 @@ def index():
         cursor.execute("SELECT id, word, definition, dialect FROM words")
     rows = cursor.fetchall()
     conn.close()
-<<<<<<< HEAD
-    return render_template("home.html", results=results)
-=======
     return render_template("home.html", rows=rows)
->>>>>>> 61ba5eb48ffc98b08a3b518e4b8c3dce3d56cbbc
 
 @app.route('/add', methods=['POST'])
 def add():
@@ -59,25 +50,22 @@ def delete():
     conn.close()
     return redirect(url_for('index'))
 
+# Database utility functions
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect('sarawak_dictionary.db')  # change name if needed
+        g.db = sqlite3.connect('sarawak_dictionary.db')
     return g.db
 
 def close_db(e=None):
+    """Close the database at the end of the request."""
     db = g.pop('db', None)
     if db is not None:
         db.close()
 
 def init_db():
     db = get_db()
-    with current_app.open_resource('schema.sql') as f:  # Make sure schema.sql exists
+    with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
-
-def close_db(e=None):
-    """Close the database again at the end of the request."""
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
 
 @click.command('init-db')
 def init_db_command():
@@ -89,10 +77,7 @@ def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
 
-@app.route('/')
-def home():
-    return redirect(url_for('login'))
-
+# Authentication routes
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -149,7 +134,7 @@ def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
     flash('You have been logged out')
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)

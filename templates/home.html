@@ -8,9 +8,11 @@
             background-color: #1e1e2f;
             color: #f0f0f0;
             padding: 40px;
+            margin: 0;
         }
         h1 {
             color: #00ccff;
+            margin-top: 20px;
         }
         input[type=text] {
             padding: 10px;
@@ -68,134 +70,120 @@
           border-left: 6px solid #4CAF50;
           color: #3c763d;
         }
+
+        /* Navigation Bar Styles */
+        ul.nav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        ul.nav li {
+            float: left;
+        }
+
+        ul.nav li.right {
+            float: right;
+        }
+
+        ul.nav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 50px;
+            text-decoration: none;
+        }
+
+        ul.nav li a:hover {
+            background-color: #111;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 10px 20px;
+            margin: 6px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #3e8e41;
+        }
+
+        .nav-button {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
     </style>
 </head>
-<head>
-    <link rel="stylesheet" href="style.css">
-    <style>
-      /* Navigation Bar Styles */
-      ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background-color: #333;
-      }
-  
-      li {
-        float: left;
-      }
-  
-      li.right {
-        float: right;
-      }
-  
-      li a {
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 50px;
-        text-decoration: none;
-      }
-  
-      li a:hover {
-        background-color: #111;
-      }
-  
-      /* Button Styles */
-      .btn {
-        padding: 10px 20px;
-        margin: 6px;
-        font-size: 14px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        background-color: #4CAF50;
-        color: white;
-        transition: background-color 0.3s ease;
-      }
-  
-      .btn:hover {
-        background-color: #3e8e41;
-      }
-  
-      .nav-button {
-        background: none;
-        padding: 0;
-        margin: 0;
-      }
-    </style>
-  </head>
-  <body>
-  
-    <ul>
-      <li><a class="active" href="#home">Home</a></li>
-      <li><a href="#quiz">Quiz</a></li>
-      <li><a href="#contact">Contact</a></li>
-      <li><a href="#favourites">Favourites</a></li>
-      <li><a href="#more">More</a></li>
-  
-      {% if session.get('logged_in') %}
+<body>
+    <!-- Navigation Bar -->
+    <ul class="nav">
+        <li><a class="active" href="#home">Home</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#favourites">Favourites</a></li>
+        <li><a href="#more">More</a></li>
+
+        {% if session.get('logged_in') %}
         <li class="right">
-          <a href="/logout">Logout ({{ session.get('username') }})</a>
+            <a href="/logout">Logout ({{ session.get('username') }})</a>
         </li>
-      {% else %}
+        {% else %}
         <li class="right">
-          <a href="/signup">Sign Up</a>
+            <a href="/signup">Sign Up</a>
         </li>
         <li class="right">
-          <a href="/login">Sign In</a>
+            <a href="/login">Sign In</a>
         </li>
-      {% endif %}
+        {% endif %}
     </ul>
 
     {% with messages = get_flashed_messages() %}
-      {% if messages %}
+        {% if messages %}
         <ul class="flash-messages">
-          {% for message in messages %}
+            {% for message in messages %}
             <li>{{ message }}</li>
-          {% endfor %}
+            {% endfor %}
         </ul>
-      {% endif %}
+        {% endif %}
     {% endwith %}
 
-  </body>
-  </html>
-  
-<body>
+    <!-- Dictionary Content -->
     <h1>Sarawak Dictionary</h1>
-    <form method="POST" action="/jawapan">
-        <input type="text" name="query" placeholder="Cari perkataan..." value="">
-
-        <button type="submit">
-            Cari
-        </button>
+    <form method="GET" action="/">
+        <input type="text" name="query" placeholder="Cari perkataan..." value="{{ request.args.get('query', '') }}">
+        <button type="submit">Cari</button>
     </form>
 
-    
-        <table>
-            <tr><th>Word</th><th>Definition</th><th>Dialect</th><th>Action</th></tr>
-<<<<<<< HEAD
-            {% for row in results %}
-=======
-            {% for row in rows %}
->>>>>>> 61ba5eb48ffc98b08a3b518e4b8c3dce3d56cbbc
-            <tr>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-                <td>
-                    <form method="POST" action="/delete" class="delete-form">
-                        <input type="hidden" name="id" value="{{ row[0] }}">
-                        <button type="submit" class="delete-btn">Padam</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-   
-        <p>Tiada hasil dijumpai untuk "".</p>
-    
+    {% if rows %}
+    <table>
+        <tr><th>Word</th><th>Definition</th><th>Dialect</th><th>Action</th></tr>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>
+                <form method="POST" action="/delete" class="delete-form">
+                    <input type="hidden" name="id" value="{{ row[0] }}">
+                    <button type="submit" class="delete-btn">Padam</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>Tiada hasil dijumpai.</p>
+    {% endif %}
 
     <div class="add-form">
         <h2>Tambah Perkataan Baru</h2>
