@@ -5,6 +5,9 @@ from flask import Flask, request, redirect, url_for, render_template, flash, ses
 app = Flask(__name__)
 app.secret_key = "sarawakdictionary"
 
+# HTML template with delete option
+
+
 @app.route('/', methods=['GET'])
 def index():
     # Only show dictionary content if logged in
