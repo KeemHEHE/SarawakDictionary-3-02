@@ -1,0 +1,14 @@
+# Abaikan persekitaran maya
+venv/
+
+# Abaikan fail Python bytecode
+*.pyc
+
+# Abaikan fail sementara editor (contoh VSCode)
+.vscode/
+
+
+instance/
+
+__pycache__/
+

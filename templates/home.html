@@ -151,7 +151,7 @@
     
         <table>
             <tr><th>Word</th><th>Definition</th><th>Dialect</th><th>Action</th></tr>
-
+            {% for row in rows %}
             <tr>
                 <td>{{ row[1] }}</td>
                 <td>{{ row[2] }}</td>
@@ -163,7 +163,7 @@
                     </form>
                 </td>
             </tr>
-            
+            {% endfor %}
         </table>
    
         <p>Tiada hasil dijumpai untuk "".</p>
