@@ -1,7 +1,8 @@
 import sqlite3
-from flask import Flask, request, redirect, url_for, render_template, flash
+from flask import Flask, request, redirect, url_for, render_template, flash, session
 
 app = Flask(__name__)
+app.secret_key = "sarawakdictionary"
 
 # HTML template with delete option
 template = """
@@ -19,7 +20,7 @@ def index():
         cursor.execute("SELECT id, word, definition, dialect FROM words")
     results = cursor.fetchall()
     conn.close()
-    return render_template("home.html")
+    return render_template("home.html", results=results)
 
 @app.route('/add', methods=['POST'])
 def add():
@@ -64,13 +65,27 @@ def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
         conn = sqlite3.connect('users.db')
-        cur = conn.cursor()
-        cur.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+        cursor = conn.cursor()
+        
+        # Check if username already exists
+        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+        existing_user = cursor.fetchone()
+        
+        if existing_user:
+            conn.close()
+            flash('Username already exists. Please choose another one.')
+            return redirect(url_for('signup'))
+        
+        # Insert new user
+        cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
         conn.commit()
         conn.close()
-        flash('Signup berjaya! Sila log masuk.')
+        
+        flash('Registration successful! Please log in.')
         return redirect(url_for('login'))
+    
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -78,17 +93,30 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
         conn = sqlite3.connect('users.db')
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
-        user = cur.fetchone()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
+        user = cursor.fetchone()
         conn.close()
+        
         if user:
-            return 'Selamat datang, anda berjaya login!'
+            session['logged_in'] = True
+            session['username'] = username
+            flash('Login successful! Welcome, ' + username)
+            return redirect(url_for('index'))
         else:
-            flash('Username atau password salah')
+            flash('Invalid username or password')
             return redirect(url_for('login'))
-    return render_template('login.html')
+    
+    return render_template('sign_in.html')
+
+@app.route("/logout")
+def logout():
+    session.pop('logged_in', None)
+    session.pop('username', None)
+    flash('You have been logged out')
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     init_db()

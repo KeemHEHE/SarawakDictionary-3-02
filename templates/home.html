@@ -55,6 +55,19 @@
         .delete-form {
             display: inline;
         }
+        .user-status {
+          float: right;
+          margin: 15px;
+          color: #333;
+        }
+        .flash-messages {
+          list-style: none;
+          padding: 10px;
+          margin: 10px 0;
+          background-color: #dff0d8;
+          border-left: 6px solid #4CAF50;
+          color: #3c763d;
+        }
     </style>
 </head>
 <head>
@@ -122,19 +135,30 @@
       <li><a href="#favourites">Favourites</a></li>
       <li><a href="#more">More</a></li>
   
-      <!-- Sign In and Sign Up Buttons on the Right -->
-      <li class="right nav-button">
-        <a href="signup.html">
-          <button class="btn">Sign Up</button>
-        </a>
-      </li>
-      <li class="right nav-button">
-        <a href="sign_in.html">
-          <button class="btn">Sign In</button>
-        </a>
-      </li>
+      {% if session.get('logged_in') %}
+        <li class="right">
+          <a href="/logout">Logout ({{ session.get('username') }})</a>
+        </li>
+      {% else %}
+        <li class="right">
+          <a href="/signup">Sign Up</a>
+        </li>
+        <li class="right">
+          <a href="/login">Sign In</a>
+        </li>
+      {% endif %}
     </ul>
-  
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
   </body>
   </html>
   
@@ -151,7 +175,7 @@
     
         <table>
             <tr><th>Word</th><th>Definition</th><th>Dialect</th><th>Action</th></tr>
-
+            {% for row in results %}
             <tr>
                 <td>{{ row[1] }}</td>
                 <td>{{ row[2] }}</td>
@@ -163,7 +187,7 @@
                     </form>
                 </td>
             </tr>
-            
+            {% endfor %}
         </table>
    
         <p>Tiada hasil dijumpai untuk "".</p>
