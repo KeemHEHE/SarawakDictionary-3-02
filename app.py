@@ -65,18 +65,6 @@ def init_db():
     with current_app.open_resource('schema.sql') as f:  # Make sure schema.sql exists
         db.executescript(f.read().decode('utf8'))
 
-# Setup for sign in and sign up button
-# def init_db():
-#     conn = sqlite3.connect('users.db')
-#     conn.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)')
-#     conn.close()
-#     conn = sqlite3.connect('sarawak_dictionary.db')
-#     cursor = conn.cursor()
-#     with open('sarawak_dictionary_100.sql', 'r', encoding='utf-8') as f:
-#         cursor.executescript(f.read())
-#     conn.commit()
-#     conn.close()
-
 def close_db(e=None):
     """Close the database again at the end of the request."""
     if hasattr(g, 'sqlite_db'):
