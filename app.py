@@ -1,8 +1,13 @@
+import os
+import json
 import sqlite3
 import click
-from flask import Flask, request, redirect, url_for, render_template, g, current_app, flash
+from flask import Flask, request, redirect, url_for, render_template, g, current_app, flash, jsonify
+
 
 app = Flask(__name__)
+DB_FILE = 'dictionary.json'
+
 
 # HTML template with delete option
 template = """
@@ -115,7 +120,54 @@ def login():
             return redirect(url_for('login'))
     return render_template('login.html')
 
+if not os.path.exists(DB_FILE):
+    with open(DB_FILE, 'w') as f:
+        json.dump([], f)
+
+@app.route('/api/add-word', methods=['POST'])
+def add_word():
+    try:
+        data = request.get_json()  # Changed from request.json for better error handling
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+            
+        word = data.get('word')
+        definition = data.get('definition')
+        dialect = data.get('dialect')
+
+        if not word or not definition or not dialect:
+            return jsonify({'error': 'Missing word, definition, or dialect'}), 400
+
+        # Read existing words
+        with open(DB_FILE, 'r') as f:
+            dictionary = json.load(f)
+
+        # Check if word already exists
+        if any(entry['word'].lower() == word.lower() and entry['dialect'].lower() == dialect.lower() for entry in dictionary):
+            return jsonify({'error': 'Word already exists in this dialect'}), 400
+
+        # Add new word
+        dictionary.append({
+            'word': word,
+            'definition': definition,
+            'dialect': dialect
+        })
+
+        # Save back to file
+        with open(DB_FILE, 'w') as f:
+            json.dump(dictionary, f, indent=2)
+
+        return jsonify({'message': 'Word added successfully'}), 201
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    init_db()
+    app.run(debug=True, port=5000)
+
 if __name__ == '__main__':
     app.run(debug=True)
+    init_db()
 
 init_app(app)
