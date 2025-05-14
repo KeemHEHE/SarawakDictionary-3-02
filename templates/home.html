@@ -21,16 +21,23 @@
             border: none;
             margin-right: 10px;
         }
-        button, .delete-btn {
+        button, .delete-btn, .edit-btn {
             padding: 10px 20px;
             background-color: #00ccff;
             color: #000;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            margin-right: 5px;
         }
-        button:hover, .delete-btn:hover {
+        button:hover, .delete-btn:hover, .edit-btn:hover {
             background-color: #00b8e6;
+        }
+        .edit-btn {
+            background-color: #4CAF50;
+        }
+        .edit-btn:hover {
+            background-color: #3e8e41;
         }
         table {
             margin-top: 30px;
@@ -54,7 +61,7 @@
             padding-top: 20px;
             border-top: 2px solid #444;
         }
-        .delete-form {
+        .delete-form, .edit-form {
             display: inline;
         }
         .user-status {
@@ -173,6 +180,8 @@
             <td>{{ row[2] }}</td>
             <td>{{ row[3] }}</td>
             <td>
+                <a href="{{ url_for('edit', word_id=row[0]) }}"> <button class="edit-btn">Edit</button></a>
+
                 <form method="POST" action="/delete" class="delete-form">
                     <input type="hidden" name="id" value="{{ row[0] }}">
                     <button type="submit" class="delete-btn">Padam</button>

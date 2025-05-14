@@ -53,6 +53,37 @@ def delete():
     conn.close()
     return redirect(url_for('index'))
 
+@app.route('/edit/<int:word_id>', methods=['GET'])
+def edit(word_id):
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, word, definition, dialect FROM words WHERE id = ?", (word_id,))
+    word = cursor.fetchone()
+    conn.close()
+    
+    if not word:
+        flash('Entry not found')
+        return redirect(url_for('index'))
+        
+    return render_template('edit.html', word=word)
+
+@app.route('/update', methods=['POST'])
+def update():
+    word_id = request.form['id']
+    word = request.form['word']
+    definition = request.form['definition']
+    dialect = request.form['dialect']
+    
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    cursor.execute("UPDATE words SET word = ?, definition = ?, dialect = ? WHERE id = ?", 
+                  (word, definition, dialect, word_id))
+    conn.commit()
+    conn.close()
+    
+    flash('Entry updated successfully')
+    return redirect(url_for('index'))
+
 # Database utility functions
 def get_db():
     if 'db' not in g:
