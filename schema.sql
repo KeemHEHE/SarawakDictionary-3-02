@@ -17,6 +17,14 @@ CREATE TABLE IF NOT EXISTS words (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );  
 
+CREATE TABLE IF NOT EXISTS favorites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    word_id INTEGER NOT NULL,
+    FOREIGN KEY (id) REFERENCES words(id)
+);
+
+
 INSERT INTO words (word, definition, word_type, dialect, example_sentence, created_at)
 VALUES ('kitak', 'awak', 'kata ganti nama', 'Iban', 'Kitak pegi mana?', '2025-04-30T09:41:26.538152');
 INSERT INTO words (word, definition, word_type, dialect, example_sentence, created_at)

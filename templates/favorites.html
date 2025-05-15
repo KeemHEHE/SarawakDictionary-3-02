@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Favorites</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>Your Favorite Words</h2>
+    <ul>
+        {% for word in favorites %}
+        <li>
+            <strong>{{ word[1] }}</strong> ({{ word[3] }}) - {{ word[2] }}
+            <form action="{{ url_for('unfavorite', word_id=word[0]) }}" method="post" style="display:inline;">
+                <button type="submit">❌ Remove</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="/">← Back to Home</a>
+</body>
+</html>

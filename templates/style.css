@@ -41,7 +41,7 @@ form {
     resize: vertical;
     min-height: 80px;
   }
-  
+    
   button {
     padding: 10px 15px;
     background-color: #2d89ef;
@@ -55,5 +55,4 @@ form {
     background-color: #1b5fab;
   }
 
-
-
+  

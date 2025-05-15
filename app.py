@@ -2,21 +2,21 @@ import os
 import json
 import sqlite3
 import click
-from flask import Flask, request, redirect, url_for, render_template, g, current_app, flash, jsonify
-
+from flask import Flask, request, redirect, url_for, render_template, flash, session, g, current_app
 
 app = Flask(__name__)
-DB_FILE = 'dictionary.json'
-
+app.secret_key = "sarawakdictionary"
 
 # HTML template with delete option
-template = """
-"""
+
 
 @app.route('/', methods=['GET'])
 def index():
+    # Only show dictionary content if logged in
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+        
     query = request.args.get('query', '')
-    row = []
     conn = sqlite3.connect('sarawak_dictionary.db')
     cursor = conn.cursor()
     if query:
@@ -55,25 +55,53 @@ def delete():
     conn.close()
     return redirect(url_for('index'))
 
+@app.route('/edit/<int:word_id>', methods=['GET'])
+def edit(word_id):
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, word, definition, dialect FROM words WHERE id = ?", (word_id,))
+    word = cursor.fetchone()
+    conn.close()
+    
+    if not word:
+        flash('Entry not found')
+        return redirect(url_for('index'))
+        
+    return render_template('edit.html', word=word)
+
+@app.route('/update', methods=['POST'])
+def update():
+    word_id = request.form['id']
+    word = request.form['word']
+    definition = request.form['definition']
+    dialect = request.form['dialect']
+    
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    cursor.execute("UPDATE words SET word = ?, definition = ?, dialect = ? WHERE id = ?", 
+                  (word, definition, dialect, word_id))
+    conn.commit()
+    conn.close()
+    
+    flash('Entry updated successfully')
+    return redirect(url_for('index'))
+
+# Database utility functions
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect('sarawak_dictionary.db')  # change name if needed
+        g.db = sqlite3.connect('sarawak_dictionary.db')
     return g.db
 
 def close_db(e=None):
+    """Close the database at the end of the request."""
     db = g.pop('db', None)
     if db is not None:
         db.close()
 
 def init_db():
     db = get_db()
-    with current_app.open_resource('schema.sql') as f:  # Make sure schema.sql exists
+    with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
-
-def close_db(e=None):
-    """Close the database again at the end of the request."""
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
 
 @click.command('init-db')
 def init_db_command():
@@ -85,22 +113,33 @@ def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
 
-@app.route('/')
-def home():
-    return redirect(url_for('login'))
-
+# Authentication routes
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
         conn = sqlite3.connect('users.db')
-        cur = conn.cursor()
-        cur.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+        cursor = conn.cursor()
+        
+        # Check if username already exists
+        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+        existing_user = cursor.fetchone()
+        
+        if existing_user:
+            conn.close()
+            flash('Username already exists. Please choose another one.')
+            return redirect(url_for('signup'))
+        
+        # Insert new user
+        cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
         conn.commit()
         conn.close()
-        flash('Signup berjaya! Sila log masuk.')
+        
+        flash('Registration successful! Please log in.')
         return redirect(url_for('login'))
+    
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -108,63 +147,83 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
         conn = sqlite3.connect('users.db')
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
-        user = cur.fetchone()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
+        user = cursor.fetchone()
         conn.close()
+        
         if user:
-            return 'Selamat datang, anda berjaya login!'
+            session['logged_in'] = True
+            session['username'] = username
+            flash('Login successful! Welcome, ' + username)
+            return redirect(url_for('index'))
         else:
-            flash('Username atau password salah')
+            flash('Invalid username or password')
             return redirect(url_for('login'))
-    return render_template('login.html')
+    
+    return render_template('sign_in.html')
 
-if not os.path.exists(DB_FILE):
-    with open(DB_FILE, 'w') as f:
-        json.dump([], f)
+@app.route("/logout")
+def logout():
+    session.pop('logged_in', None)
+    session.pop('username', None)
+    flash('You have been logged out')
+    return redirect(url_for('login'))
 
-@app.route('/api/add-word', methods=['POST'])
-def add_word():
-    try:
-        data = request.get_json()  # Changed from request.json for better error handling
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
-            
-        word = data.get('word')
-        definition = data.get('definition')
-        dialect = data.get('dialect')
+# to favorite a word
+@app.route('/favorite/<int:word_id>', methods=['POST'])
+def favorite(word_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
 
-        if not word or not definition or not dialect:
-            return jsonify({'error': 'Missing word, definition, or dialect'}), 400
+    username = session['username']
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    
+    # Avoid duplicates
+    cursor.execute("SELECT * FROM favorites WHERE username = ? AND word_id = ?", (username, word_id))
+    if not cursor.fetchone():
+        cursor.execute("INSERT INTO favorites (username, word_id) VALUES (?, ?)", (username, word_id))
+        conn.commit()
+    
+    conn.close()
+    return redirect(url_for('index'))
 
-        # Read existing words
-        with open(DB_FILE, 'r') as f:
-            dictionary = json.load(f)
+# unfavorite a word
+@app.route('/unfavorite/<int:word_id>', methods=['POST'])
+def unfavorite(word_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
 
-        # Check if word already exists
-        if any(entry['word'].lower() == word.lower() and entry['dialect'].lower() == dialect.lower() for entry in dictionary):
-            return jsonify({'error': 'Word already exists in this dialect'}), 400
+    username = session['username']
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM favorites WHERE username = ? AND word_id = ?", (username, word_id))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('favorites'))
 
-        # Add new word
-        dictionary.append({
-            'word': word,
-            'definition': definition,
-            'dialect': dialect
-        })
+# view favorites page
+@app.route('/favorites')
+def favorites():
+    if 'username' not in session:
+        return redirect(url_for('login'))
 
-        # Save back to file
-        with open(DB_FILE, 'w') as f:
-            json.dump(dictionary, f, indent=2)
+    username = session['username']
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT w.id, w.word, w.definition, w.dialect
+        FROM words w
+        JOIN favorites f ON w.id = f.word_id
+        WHERE f.username = ?
+    ''', (username,))
+    fav_words = cursor.fetchall()
+    conn.close()
 
-        return jsonify({'message': 'Word added successfully'}), 201
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    init_db()
-    app.run(debug=True, port=5000)
+    return render_template('favorites.html', favorites=fav_words)
 
 if __name__ == '__main__':
     app.run(debug=True)

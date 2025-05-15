@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Dictionary Entry - Sarawak Dictionary</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e2f;
+            color: #f0f0f0;
+            padding: 40px;
+            margin: 0;
+        }
+        h1 {
+            color: #00ccff;
+            margin-top: 20px;
+        }
+        input[type=text] {
+            padding: 10px;
+            width: 300px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 15px;
+            display: block;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #00ccff;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #3e8e41;
+        }
+        .cancel-btn {
+            background-color: #f44336;
+        }
+        .cancel-btn:hover {
+            background-color: #d32f2f;
+        }
+        .edit-form {
+            background-color: #2a2a3d;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        /* Navigation Bar Styles */
+        ul.nav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        ul.nav li {
+            float: left;
+        }
+
+        ul.nav li.right {
+            float: right;
+        }
+
+        ul.nav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 50px;
+            text-decoration: none;
+        }
+
+        ul.nav li a:hover {
+            background-color: #111;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <ul class="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#favourites">Favourites</a></li>
+        <li><a href="#more">More</a></li>
+
+        {% if session.get('logged_in') %}
+        <li class="right">
+            <a href="/logout">Logout ({{ session.get('username') }})</a>
+        </li>
+        {% else %}
+        <li class="right">
+            <a href="/signup">Sign Up</a>
+        </li>
+        <li class="right">
+            <a href="/login">Sign In</a>
+        </li>
+        {% endif %}
+    </ul>
+
+    <h1>Edit Dictionary Entry</h1>
+    
+    <div class="edit-form">
+        <form method="POST" action="/update">
+            <input type="hidden" name="id" value="{{ word[0] }}">
+            
+            <div class="form-group">
+                <label for="word">Perkataan:</label>
+                <input type="text" id="word" name="word" value="{{ word[1] }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="definition">Maksud:</label>
+                <input type="text" id="definition" name="definition" value="{{ word[2] }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="dialect">Dialek:</label>
+                <input type="text" id="dialect" name="dialect" value="{{ word[3] }}" required>
+            </div>
+            
+            <button type="submit">Save Changes</button>
+            <a href="/" class="cancel-btn" style="display: inline-block; text-decoration: none; padding: 10px 20px; border-radius: 8px;">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>
