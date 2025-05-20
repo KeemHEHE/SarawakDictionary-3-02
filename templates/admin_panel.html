@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel - Sarawak Dictionary</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e2f;
+            color: #f0f0f0;
+            padding: 40px;
+            margin: 0;
+        }
+        h1, h2 {
+            color: #00ccff;
+            margin-top: 20px;
+        }
+        input[type=text] {
+            padding: 10px;
+            width: 250px;
+            border-radius: 8px;
+            border: none;
+            margin-right: 10px;
+        }
+        button, .approve-btn, .reject-btn, .back-btn {
+            padding: 10px 20px;
+            background-color: #00ccff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        button:hover, .back-btn:hover {
+            background-color: #00b8e6;
+        }
+        .approve-btn {
+            background-color: #4CAF50;
+        }
+        .approve-btn:hover {
+            background-color: #3e8e41;
+        }
+        .reject-btn {
+            background-color: #f44336;
+        }
+        .reject-btn:hover {
+            background-color: #d32f2f;
+        }
+        table {
+            margin-top: 30px;
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #17a0c3;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background-color: #33334d;
+            color: #00ccff;
+        }
+        .user-status {
+          float: right;
+          margin: 15px;
+          color: #333;
+        }
+        .flash-messages {
+          list-style: none;
+          padding: 10px;
+          margin: 10px 0;
+          background-color: #dff0d8;
+          border-left: 6px solid #4CAF50;
+          color: #3c763d;
+        }
+        .no-entries {
+            background-color: #33334d;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .approve-form, .reject-form {
+            display: inline;
+        }
+        .section-divider {
+            border-top: 2px solid #444;
+            margin: 40px 0 30px 0;
+            padding-top: 20px;
+        }
+        .diff-highlight {
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .old-value {
+            background-color: rgba(255, 0, 0, 0.2);
+            text-decoration: line-through;
+        }
+        .new-value {
+            background-color: rgba(0, 255, 0, 0.2);
+        }
+
+        /* Navigation Bar Styles */
+        ul.nav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        ul.nav li {
+            float: left;
+        }
+
+        ul.nav li.right {
+            float: right;
+        }
+
+        ul.nav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 50px;
+            text-decoration: none;
+        }
+
+        ul.nav li a:hover {
+            background-color: #111;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 10px 20px;
+            margin: 6px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #3e8e41;
+        }
+
+        .nav-button {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        /* Admin badge */
+        .admin-badge {
+            background-color: #f44336;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <ul class="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#favourites">Favourites</a></li>
+        <li><a class="active" href="#admin">Admin Panel</a></li>
+
+        {% if session.get('logged_in') %}
+        <li class="right">
+            <a href="/logout">Logout ({{ session.get('username') }} <span class="admin-badge">Admin</span>)</a>
+        </li>
+        {% else %}
+        <li class="right">
+            <a href="/login">Sign In</a>
+        </li>
+        {% endif %}
+    </ul>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Admin Panel Content -->
+    <h1>Admin Panel</h1>
+    
+    <a href="/"><button class="back-btn">Back to Dictionary</button></a>
+
+    <!-- Pending Words Section -->
+    <h2>Pending Word Contributions</h2>
+    {% if pending_words %}
+    <table>
+        <tr>
+            <th>Word</th>
+            <th>Definition</th>
+            <th>Dialect</th>
+            <th>Actions</th>
+        </tr>
+        {% for word in pending_words %}
+        <tr>
+            <td>{{ word[1] }}</td>
+            <td>{{ word[2] }}</td>
+            <td>{{ word[3] }}</td>
+            <td>
+                <form method="POST" action="/approve" class="approve-form">
+                    <input type="hidden" name="id" value="{{ word[0] }}">
+                    <button type="submit" class="approve-btn">Approve</button>
+                </form>
+                
+                <form method="POST" action="/reject" class="reject-form">
+                    <input type="hidden" name="id" value="{{ word[0] }}">
+                    <button type="submit" class="reject-btn">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="no-entries">
+        <p>No pending word contributions to review.</p>
+    </div>
+    {% endif %}
+
+    <!-- Pending Edits Section -->
+    <div class="section-divider"></div>
+    <h2>Pending Edit Requests</h2>
+    {% if pending_edits %}
+    <table>
+        <tr>
+            <th>Original Word</th>
+            <th>Changes</th>
+            <th>Submitted By</th>
+            <th>Actions</th>
+        </tr>
+        {% for edit in pending_edits %}
+        <tr>
+            <td>{{ edit[2] }}</td>
+            <td>
+                <div>
+                    <strong>Word:</strong> 
+                    {% if edit[2] != edit[5] %}
+                    <span class="diff-highlight old-value">{{ edit[2] }}</span> → 
+                    <span class="diff-highlight new-value">{{ edit[5] }}</span>
+                    {% else %}
+                    <span>(Unchanged)</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <strong>Definition:</strong> 
+                    {% if edit[3] != edit[6] %}
+                    <span class="diff-highlight old-value">{{ edit[3] }}</span> → 
+                    <span class="diff-highlight new-value">{{ edit[6] }}</span>
+                    {% else %}
+                    <span>(Unchanged)</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <strong>Dialect:</strong> 
+                    {% if edit[4] != edit[7] %}
+                    <span class="diff-highlight old-value">{{ edit[4] }}</span> → 
+                    <span class="diff-highlight new-value">{{ edit[7] }}</span>
+                    {% else %}
+                    <span>(Unchanged)</span>
+                    {% endif %}
+                </div>
+            </td>
+            <td>{{ edit[8] }}</td>
+            <td>
+                <form method="POST" action="/approve_edit" class="approve-form">
+                    <input type="hidden" name="edit_id" value="{{ edit[0] }}">
+                    <button type="submit" class="approve-btn">Approve</button>
+                </form>
+                
+                <form method="POST" action="/reject_edit" class="reject-form">
+                    <input type="hidden" name="edit_id" value="{{ edit[0] }}">
+                    <button type="submit" class="reject-btn">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="no-entries">
+        <p>No pending edit requests to review.</p>
+    </div>
+    {% endif %}
+</body>
+</html>

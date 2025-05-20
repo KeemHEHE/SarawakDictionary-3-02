@@ -129,6 +129,42 @@
             padding: 0;
             margin: 0;
         }
+        
+        /* Admin badge */
+        .admin-badge {
+            background-color: #f44336;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+        
+        /* Approval notice */
+        .approval-notice {
+            background-color: #33334d;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            color: #ffcc00;
+            font-size: 14px;
+        }
+        
+        /* Admin panel button */
+        .admin-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        .admin-btn:hover {
+            background-color: #d32f2f;
+        }
     </style>
 </head>
 <body>
@@ -142,8 +178,13 @@
 
         {% if session.get('logged_in') %}
         <li class="right">
-            <a href="/logout">Logout ({{ session.get('username') }})</a>
+            <a href="/logout">Logout ({{ session.get('username') }}{% if is_admin %} <span class="admin-badge">Admin</span>{% endif %})</a>
         </li>
+        {% if is_admin %}
+        <li class="right">
+            <a href="/admin">Admin Panel</a>
+        </li>
+        {% endif %}
         {% else %}
         <li class="right">
             <a href="/signup">Sign Up</a>
@@ -167,8 +208,11 @@
     <!-- Dictionary Content -->
     <h1>Sarawak Dictionary</h1>
     <form method="GET" action="/">
-        <input type="text" name="query" placeholder="Cari perkataan..." value="{{ request.args.get('query', '') }}">
-        <button type="submit">Cari</button>
+        <input type="text" name="query" placeholder="Find word..." value="{{ request.args.get('query', '') }}">
+        <button type="submit">Search</button>
+        {% if is_admin %}
+        <a href="/admin"><button type="button" class="admin-btn">Admin Panel</button></a>
+        {% endif %}
     </form>
 
     {% if rows %}
@@ -182,25 +226,32 @@
             <td>
                 <a href="{{ url_for('edit', word_id=row[0]) }}"> <button class="edit-btn">Edit</button></a>
 
+                {% if is_admin %}
                 <form method="POST" action="/delete" class="delete-form">
                     <input type="hidden" name="id" value="{{ row[0] }}">
                     <button type="submit" class="delete-btn">Padam</button>
                 </form>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
     </table>
     {% else %}
-    <p>Tiada hasil dijumpai.</p>
+    <p>Words not found :(</p>
     {% endif %}
 
     <div class="add-form">
-        <h2>Tambah Perkataan Baru</h2>
+        <h2>Add New Word</h2>
+        {% if not is_admin %}
+        <div class="approval-notice">
+            Note: Your submissions will need approval by an administrator before appearing in the dictionary.
+        </div>
+        {% endif %}
         <form method="POST" action="/add">
-            <input type="text" name="word" placeholder="Perkataan" required>
-            <input type="text" name="definition" placeholder="Maksud" required>
-            <input type="text" name="dialect" placeholder="Dialek" required>
-            <button type="submit">Tambah</button>
+            <input type="text" name="word" placeholder="Word" required>
+            <input type="text" name="definition" placeholder="Meaning" required>
+            <input type="text" name="dialect" placeholder="Dialect" required>
+            <button type="submit">Add</button>
         </form>
     </div>
 </body>
