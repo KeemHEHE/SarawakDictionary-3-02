@@ -1,176 +1,177 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Sarawak Dictionary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1e1e2f;
-            color: #f0f0f0;
-            padding: 40px;
-            margin: 0;
-        }
-        h1 {
-            color: #00ccff;
-            margin-top: 20px;
-        }
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to right, #1f1c2c, #928dab);
+        color: #f5f5f5;
+        margin: 0;
+        padding: 40px;
+    }
+
+    h1, h2 {
+        color: #facc15;
+        text-align: center;
+        text-shadow: 1px 1px 3px #000;
+    }
+
+    input[type=text] {
+        padding: 12px;
+        width: 280px;
+        border-radius: 10px;
+        border: none;
+        margin: 10px;
+        background-color: #2d2a42;
+        color: #f5f5f5;
+    }
+
+    button, .delete-btn, .edit-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin: 5px;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
+
+    button {
+        background: #00d4ff;
+        color: #1f1c2c;
+    }
+    button:hover {
+        background: #00aacc;
+        color: white;
+    }
+
+    .edit-btn {
+        background: #22c55e;
+        color: #fff;
+    }
+    .edit-btn:hover {
+        background: #16a34a;
+    }
+
+    .delete-btn {
+        background: #ef4444;
+        color: #fff;
+    }
+    .delete-btn:hover {
+        background: #b91c1c;
+    }
+
+    .admin-btn {
+        background: #facc15;
+        color: #1f1c2c;
+        font-weight: bold;
+    }
+    .admin-btn:hover {
+        background: #eab308;
+    }
+
+    .admin-badge {
+        background: #dc2626;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        color: white;
+    }
+
+    .approval-notice {
+        background-color: #fcd34d;
+        padding: 12px;
+        border-radius: 6px;
+        color: #1e293b;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .flash-messages {
+        list-style: none;
+        padding: 12px;
+        background: #d1fae5;
+        border-left: 6px solid #10b981;
+        color: #065f46;
+        margin: 20px 0;
+        border-radius: 8px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+        background-color: #2d2a42;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    th, td {
+        padding: 14px;
+        text-align: left;
+        border-bottom: 1px solid #444;
+    }
+
+    th {
+        background-color: #6b21a8;
+        color: #fff;
+    }
+
+    ul.nav {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        background: #111827;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+
+    ul.nav li {
+        float: left;
+    }
+
+    ul.nav li.right {
+        float: right;
+    }
+
+    ul.nav li a {
+        display: block;
+        color: #facc15;
+        padding: 14px 24px;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+
+    ul.nav li a:hover {
+        background-color: #1f2937;
+    }
+
+    .add-form {
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    @media screen and (max-width: 768px) {
         input[type=text] {
-            padding: 10px;
-            width: 250px;
-            border-radius: 8px;
-            border: none;
-            margin-right: 10px;
+            width: 90%;
         }
-        button, .delete-btn, .edit-btn {
-            padding: 10px 20px;
-            background-color: #00ccff;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-        button:hover, .delete-btn:hover, .edit-btn:hover {
-            background-color: #00b8e6;
-        }
-        .edit-btn {
-            background-color: #4CAF50;
-        }
-        .edit-btn:hover {
-            background-color: #3e8e41;
-        }
-        table {
-            margin-top: 30px;
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #17a0c3;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #444;
-        }
-        th {
-            background-color: #33334d;
-            color: #00ccff;
-        }
-        .add-form {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 2px solid #444;
-        }
-        .delete-form, .edit-form {
-            display: inline;
-        }
-        .user-status {
-          float: right;
-          margin: 15px;
-          color: #333;
-        }
-        .flash-messages {
-          list-style: none;
-          padding: 10px;
-          margin: 10px 0;
-          background-color: #dff0d8;
-          border-left: 6px solid #4CAF50;
-          color: #3c763d;
-        }
-
-        /* Navigation Bar Styles */
-        ul.nav {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #333;
-        }
-
-        ul.nav li {
-            float: left;
-        }
-
-        ul.nav li.right {
-            float: right;
-        }
-
-        ul.nav li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 50px;
-            text-decoration: none;
-        }
-
-        ul.nav li a:hover {
-            background-color: #111;
-        }
-
-        /* Button Styles */
-        .btn {
-            padding: 10px 20px;
-            margin: 6px;
-            font-size: 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn:hover {
-            background-color: #3e8e41;
-        }
-
-        .nav-button {
-            background: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        /* Admin badge */
-        .admin-badge {
-            background-color: #f44336;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-left: 10px;
-            font-size: 12px;
-        }
-        
-        /* Approval notice */
-        .approval-notice {
-            background-color: #33334d;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
-            color: #ffcc00;
+        table, th, td {
             font-size: 14px;
         }
-        
-        /* Admin panel button */
-        .admin-btn {
-            background-color: #f44336;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-left: 10px;
-            font-weight: bold;
-        }
-        
-        .admin-btn:hover {
-            background-color: #d32f2f;
-        }
+    }
     </style>
 </head>
 <body>
+
     <!-- Navigation Bar -->
     <ul class="nav">
-        <li><a class="active" href="#home">Home</a></li>
+        <li><a class="active" href="/">Home</a></li>
         <li><a href="#quiz">Quiz</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a href="#favourites">Favourites</a></li>
@@ -195,6 +196,7 @@
         {% endif %}
     </ul>
 
+    <!-- Flash messages -->
     {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul class="flash-messages">
@@ -205,9 +207,11 @@
         {% endif %}
     {% endwith %}
 
-    <!-- Dictionary Content -->
+    <!-- Title -->
     <h1>Sarawak Dictionary</h1>
-    <form method="GET" action="/">
+
+    <!-- Search form -->
+    <form method="GET" action="/" style="text-align:center;">
         <input type="text" name="query" placeholder="Find word..." value="{{ request.args.get('query', '') }}">
         <button type="submit">Search</button>
         {% if is_admin %}
@@ -215,6 +219,7 @@
         {% endif %}
     </form>
 
+    <!-- Dictionary Table -->
     {% if rows %}
     <table>
         <tr><th>Word</th><th>Definition</th><th>Dialect</th><th>Action</th></tr>
@@ -224,10 +229,9 @@
             <td>{{ row[2] }}</td>
             <td>{{ row[3] }}</td>
             <td>
-                <a href="{{ url_for('edit', word_id=row[0]) }}"> <button class="edit-btn">Edit</button></a>
-
+                <a href="{{ url_for('edit', word_id=row[0]) }}"><button class="edit-btn">Edit</button></a>
                 {% if is_admin %}
-                <form method="POST" action="/delete" class="delete-form">
+                <form method="POST" action="/delete" class="delete-form" style="display:inline;">
                     <input type="hidden" name="id" value="{{ row[0] }}">
                     <button type="submit" class="delete-btn">Padam</button>
                 </form>
@@ -237,9 +241,10 @@
         {% endfor %}
     </table>
     {% else %}
-    <p>Words not found :(</p>
+    <p style="text-align:center;">Words not found :(</p>
     {% endif %}
 
+    <!-- Add Word Form -->
     <div class="add-form">
         <h2>Add New Word</h2>
         {% if not is_admin %}
@@ -254,5 +259,6 @@
             <button type="submit">Add</button>
         </form>
     </div>
+
 </body>
 </html>
