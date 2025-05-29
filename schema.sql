@@ -24,6 +24,9 @@ CREATE TABLE IF NOT EXISTS favorites (
     FOREIGN KEY (id) REFERENCES words(id)
 );
 
+ALTER TABLE words ADD COLUMN approved INTEGER DEFAULT 1;
+
+
 
 INSERT INTO words (word, definition, word_type, dialect, example_sentence, created_at)
 VALUES ('kitak', 'awak', 'kata ganti nama', 'Iban', 'Kitak pegi mana?', '2025-04-30T09:41:26.538152');

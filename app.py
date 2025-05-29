@@ -1,5 +1,3 @@
-import os
-import json
 import sqlite3
 import click
 from flask import Flask, request, redirect, url_for, render_template, flash, session, g, current_app
@@ -422,61 +420,7 @@ def logout():
     flash('Anda telah log keluar')
     return redirect(url_for('login'))
 
-# to favorite a word
-@app.route('/favorite/<int:word_id>', methods=['POST'])
-def favorite(word_id):
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    username = session['username']
-    conn = sqlite3.connect('sarawak_dictionary.db')
-    cursor = conn.cursor()
-    
-    # Avoid duplicates
-    cursor.execute("SELECT * FROM favorites WHERE username = ? AND word_id = ?", (username, word_id))
-    if not cursor.fetchone():
-        cursor.execute("INSERT INTO favorites (username, word_id) VALUES (?, ?)", (username, word_id))
-        conn.commit()
-    
-    conn.close()
-    return redirect(url_for('index'))
-
-# unfavorite a word
-@app.route('/unfavorite/<int:word_id>', methods=['POST'])
-def unfavorite(word_id):
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    username = session['username']
-    conn = sqlite3.connect('sarawak_dictionary.db')
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM favorites WHERE username = ? AND word_id = ?", (username, word_id))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('favorites'))
-
-# view favorites page
-@app.route('/favorites')
-def favorites():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    username = session['username']
-    conn = sqlite3.connect('sarawak_dictionary.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT w.id, w.word, w.definition, w.dialect
-        FROM words w
-        JOIN favorites f ON w.id = f.word_id
-        WHERE f.username = ?
-    ''', (username,))
-    fav_words = cursor.fetchall()
-    conn.close()
-
-    return render_template('favorites.html', favorites=fav_words)
-
-if __name__ == '__main__':
+if __name__ == '_main_':
     app.run(debug=True)
-    init_db()
 
 init_app(app)
