@@ -420,7 +420,7 @@ def logout():
     flash('Anda telah log keluar')
     return redirect(url_for('login'))
 
-if __name__ == '__main__':
+if __name__ == '_main_':
     app.run(debug=True)
 
 init_app(app)
