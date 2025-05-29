@@ -7,15 +7,15 @@ CREATE TABLE IF NOT EXISTS users (
    password TEXT
 );
 
-CREATE TABLE IF NOT EXISTS words (
+CREATE TABLE words (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    word TEXT NOT NULL,
+    word TEXT NOT NULL UNIQUE,
     definition TEXT NOT NULL,
-    word_type TEXT,
-    dialect TEXT,
-    example_sentence TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);  
+    dialect TEXT NOT NULL,
+    approved INTEGER NOT NULL
+);
+
+  
 
 CREATE TABLE IF NOT EXISTS favorites (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
