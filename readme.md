@@ -7,4 +7,4 @@
 flask init-db
 
 ## How to run app
-flask rungit
+flask run
