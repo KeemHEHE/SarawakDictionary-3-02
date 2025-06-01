@@ -13,7 +13,7 @@ def index():
         return redirect(url_for('login'))
         
     query = request.args.get('query', '')
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     if query:
         cursor.execute("SELECT id, word, definition, dialect FROM words WHERE word LIKE ? AND approved = 1", (f"%{query}%",))
@@ -36,7 +36,7 @@ def add():
     # Check if user is admin
     admin_status = is_admin()
     
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     
     # If admin, auto-approve the word, otherwise mark as pending
@@ -69,7 +69,7 @@ def delete():
         return redirect(url_for('index'))
     
     word_id = request.form['id']
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM words WHERE id = ?", (word_id,))
     conn.commit()
@@ -81,7 +81,7 @@ def delete():
 @app.route('/edit/<int:word_id>', methods=['GET'])
 def edit(word_id):
     # Get word data
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT id, word, definition, dialect FROM words WHERE id = ?", (word_id,))
     word = cursor.fetchone()
@@ -107,7 +107,7 @@ def update():
     # Check if user is admin
     admin_status = is_admin()
     
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     
     if admin_status:
@@ -163,7 +163,7 @@ def admin_panel():
         flash('Kebenaran ditolak: Akses pentadbir diperlukan')
         return redirect(url_for('index'))
     
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     
     # Get pending words
@@ -206,7 +206,7 @@ def approve_word():
         return redirect(url_for('index'))
     
     word_id = request.form['id']
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute("UPDATE words SET approved = 1 WHERE id = ?", (word_id,))
     conn.commit()
@@ -222,7 +222,7 @@ def reject_word():
         return redirect(url_for('index'))
     
     word_id = request.form['id']
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM words WHERE id = ?", (word_id,))
     conn.commit()
@@ -239,7 +239,7 @@ def approve_edit():
     
     edit_id = request.form['edit_id']
     
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     
     # Get the edit details
@@ -277,7 +277,7 @@ def reject_edit():
     
     edit_id = request.form['edit_id']
     
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     
     # Remove the pending edit
@@ -296,7 +296,7 @@ def is_admin():
     username = session.get('username')
     
     # Create users database if it doesn't exist
-    conn = sqlite3.connect('sarawak_dictionary.db')
+    conn = get_db()
     cursor = conn.cursor()
     
     # Check if admin column exists, if not create it
@@ -347,7 +347,7 @@ def signup():
         username = request.form['username']
         password = request.form['password']
         
-        conn = sqlite3.connect('sarawak_dictionary.db')
+        conn = get_db()
         cursor = conn.cursor()
         
         # Create users table if it doesn't exist
@@ -385,7 +385,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        conn = sqlite3.connect('sarawak_dictionary.db')
+        conn = get_db()
         cursor = conn.cursor()
         
         # Create users table if it doesn't exist
@@ -400,7 +400,6 @@ def login():
         
         cursor.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
         user = cursor.fetchone()
-        conn.close()
         
         if user:
             session['logged_in'] = True
