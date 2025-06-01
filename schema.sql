@@ -7,15 +7,26 @@ CREATE TABLE IF NOT EXISTS users (
    password TEXT
 );
 
-CREATE TABLE IF NOT EXISTS words (
+CREATE TABLE words (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    word TEXT NOT NULL,
+    word TEXT NOT NULL UNIQUE,
     definition TEXT NOT NULL,
-    word_type TEXT,
-    dialect TEXT,
-    example_sentence TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);  
+    dialect TEXT NOT NULL,
+    approved INTEGER NOT NULL
+);
+
+  
+
+CREATE TABLE IF NOT EXISTS favorites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    word_id INTEGER NOT NULL,
+    FOREIGN KEY (id) REFERENCES words(id)
+);
+
+ALTER TABLE words ADD COLUMN approved INTEGER DEFAULT 1;
+
+
 
 INSERT INTO words (word, definition, word_type, dialect, example_sentence, created_at)
 VALUES ('kitak', 'awak', 'kata ganti nama', 'Iban', 'Kitak pegi mana?', '2025-04-30T09:41:26.538152');

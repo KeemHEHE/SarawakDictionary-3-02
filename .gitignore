@@ -1,5 +1,6 @@
 # Abaikan persekitaran maya
 venv/
+.venv
 
 # Abaikan fail Python bytecode
 *.pyc
