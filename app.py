@@ -296,7 +296,7 @@ def is_admin():
     username = session.get('username')
     
     # Create users database if it doesn't exist
-    conn = sqlite3.connect('users.db')
+    conn = sqlite3.connect('sarawak_dictionary.db')
     cursor = conn.cursor()
     
     # Check if admin column exists, if not create it
@@ -347,7 +347,7 @@ def signup():
         username = request.form['username']
         password = request.form['password']
         
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect('sarawak_dictionary.db')
         cursor = conn.cursor()
         
         # Create users table if it doesn't exist
@@ -385,7 +385,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect('sarawak_dictionary.db')
         cursor = conn.cursor()
         
         # Create users table if it doesn't exist
