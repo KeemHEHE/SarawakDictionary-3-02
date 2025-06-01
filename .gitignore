@@ -13,3 +13,4 @@ instance/
 
 __pycache__/
 
+*.db
