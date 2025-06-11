@@ -219,6 +219,36 @@
         {% endif %}
     </form>
 
+<h1>Senarai Perkataan</h1>
+
+<form method="get" action="/">
+  <label for="dialect">Pilih Dialek:</label>
+  <select name="dialect" id="dialect" onchange="this.form.submit()">
+    <option value="">-- Semua Dialek --</option>
+    {% for dialect in dialects %}
+      <option value="{{ dialect['dialect'] }}" {% if dialect['dialect'] == selected_dialect %}selected{% endif %}>
+        {{ dialect['dialect'] }}
+      </option>
+    {% endfor %}
+  </select>
+</form>
+
+<table>
+  <tr>
+    <th>Perkataan</th>
+    <th>Takrif</th>
+    <th>Dialek</th>
+  </tr>
+  {% for word in words %}
+    <tr>
+      <td>{{ word['word'] }}</td>
+      <td>{{ word['definition'] }}</td>
+      <td>{{ word['dialect'] }}</td>
+    </tr>
+  {% endfor %}
+</table>
+
+
     <!-- Dictionary Table -->
     {% if rows %}
     <table>
