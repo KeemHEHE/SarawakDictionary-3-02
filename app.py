@@ -1,5 +1,6 @@
 import sqlite3
 import click
+import random
 from flask import Flask, request, redirect, url_for, render_template, flash, session, g, current_app
 from datetime import datetime
 
@@ -196,7 +197,6 @@ def admin_panel():
     pending_edits = cursor.fetchall()
     
     conn.close()
-    
     return render_template('admin_panel.html', pending_words=pending_words, pending_edits=pending_edits)
 
 @app.route('/approve', methods=['POST'])
@@ -428,24 +428,85 @@ def get_db():
     return db
 
 @app.route('/', methods=['GET'])
-def index():
-    db = get_db()
+def dialect():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
 
-    # Dapatkan semua dialect unik
-    dialects = db.execute("SELECT DISTINCT dialect FROM words").fetchall()
+    query = request.args.get('query', '')
+    selected_dialect = request.args.get('dialect', '')
 
-    # Semak jika user memilih dialect
-    selected_dialect = request.args.get('dialect')
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
 
-    if selected_dialect:
-        words = db.execute(
-            "SELECT id, word, definition, dialect FROM words WHERE dialect = ?",
-            (selected_dialect,)
-        ).fetchall()
+    if query and selected_dialect:
+        cursor.execute("SELECT id, word, definition, dialect FROM words WHERE word LIKE ? AND dialect = ? AND approved = 1",
+                       (f"%{query}%", selected_dialect))
+    elif query:
+        cursor.execute("SELECT id, word, definition, dialect FROM words WHERE word LIKE ? AND approved = 1",
+                       (f"%{query}%",))
+    elif selected_dialect:
+        cursor.execute("SELECT id, word, definition, dialect FROM words WHERE dialect = ? AND approved = 1",
+                       (selected_dialect,))
     else:
-        words = db.execute("SELECT id, word, definition, dialect FROM words").fetchall()
+        cursor.execute("SELECT id, word, definition, dialect FROM words WHERE approved = 1")
 
-    return render_template('home.html', words=words, dialects=dialects, selected_dialect=selected_dialect)
+    rows = cursor.fetchall()
+    conn.close()
+
+    is_admin_user = is_admin()
+    return render_template("home.html", words=rows, is_admin=is_admin_user)
+
+@app.route('/quiz')
+def quiz():
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    
+    # 5 random questions
+    cursor.execute("SELECT word, definition FROM words ORDER BY RANDOM() LIMIT 5")
+    rows = cursor.fetchall()
+
+    questions = []
+    for word, correct_meaning in rows:
+        # 3 meaning that is wrong
+        cursor.execute("SELECT definition FROM words WHERE definition != ? ORDER BY RANDOM() LIMIT 3", (correct_meaning,))
+        wrongs = [row[0] for row in cursor.fetchall()]
+        
+        choices = wrongs + [correct_meaning]
+        random.shuffle(choices)
+        
+        questions.append({
+            "word": word,
+            "choices": choices,
+            "answer": correct_meaning
+        })
+
+    conn.close()
+    return render_template('quiz.html', questions=questions)
+
+@app.route('/quiz-result', methods=['POST'])
+def quiz_result():
+    score = 0
+    total = 0
+    results = []
+
+    for i in range(total): 
+        user_answer = request.form.get(f'q{i}')
+        correct_answer = request.form.get(f'answer{i}')
+        if not correct_answer:
+            break
+        total += 1
+        results.append({
+            "index": i + 1,
+            "user": user_answer,
+            "correct": correct_answer,
+            "status": "✔️" if user_answer == correct_answer else "❌"
+        })
+        if user_answer == correct_answer:
+            score += 1
+
+    return render_template('quiz_result.html', score=score, total=total, results=results)
+
+
 
 if __name__ == '_main_':
     app.run(debug=True)

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
     <meta charset="UTF-8">
     <title>Sarawak Dictionary</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -195,88 +194,30 @@
         </li>
         {% endif %}
     </ul>
+<head>
+    <title>Keputusan Kuiz</title>
+    </head>
+    <body style="font-family: 'Poppins', sans-serif; background: linear-gradient(to right, #1f1c2c, #928dab); color: #f5f5f5; margin: 0; padding: 40px;">
 
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class="flash-messages">
-            {% for message in messages %}
-            <li>{{ message }}</li>
+        <h1 style="color: #facc15; text-align: center; text-shadow: 1px 1px 3px #000;">Keputusan Kuiz</h1>
+
+        <p style="text-align: center; font-size: 28px; font-weight: bold; color: #facc15; margin-top: 30px;">
+            Skor anda: {{ score }} / {{ total }}
+        </p>
+
+        <ul style="max-width: 600px; margin: 20px auto; padding: 0; list-style: none;">
+            {% for r in results %}
+                <li style="margin-bottom: 10px; background-color: #2d2a42; padding: 12px; border-radius: 8px;">
+                    Soalan {{ r.index }}: {{ r.status }} (Anda jawab: "{{ r.user }}", Jawapan betul: "{{ r.correct }}")
+                </li>
             {% endfor %}
         </ul>
-        {% endif %}
-    {% endwith %}
 
-    <!-- Title -->
-    <h1>Sarawak Dictionary</h1>
-
-    <!-- Search form -->
-    <form method="GET" action="/" style="text-align:center;">
-        <input type="text" name="query" placeholder="Find word..." value="{{ request.args.get('query', '') }}">
-        <button type="submit">Search</button>
-        {% if is_admin %}
-        <a href="/admin"><button type="button" class="admin-btn">Admin Panel</button></a>
-        {% endif %}
-    </form>
-
-<h1>Senarai Perkataan</h1>
-
-<!--dialect drop down button-->
-<form method="GET" action="/">
-  <label for="dialect">Pilih dialect:</label>
- <select name="dialect" id="dialect" onchange="this.form.submit()">
-  <option value="">-- Semua Dialek --</option>
-  <option value="Sarawak Malay" {% if request.args.get('dialect') == 'Sarawak_Malay' %}selected{% endif %}>Sarawak Malay</option>
-  <option value="Melanau" {% if request.args.get('dialect') == 'Melanau' %}selected{% endif %}>Melanau</option>
-  <option value="Bidayuh" {% if request.args.get('dialect') == 'Bidayuh' %}selected{% endif %}>Bidayuh</option>
-  <option value="Iban" {% if request.args.get('dialect') == 'Iban' %}selected{% endif %}>Iban</option>
-</select>
-  <button type="submit">Tapis</button>
-</form>
-
-<hr>
-
-
-    <!-- Dictionary Table -->
-    {% if rows %}
-    <table>
-        <tr><th>Word</th><th>Definition</th><th>Dialect</th><th>Action</th></tr>
-        {% for row in rows %}
-        <tr>
-            <td>{{ row[1] }}</td>
-            <td>{{ row[2] }}</td>
-            <td>{{ row[3] }}</td>
-            <td>
-                <a href="{{ url_for('edit', word_id=row[0]) }}"><button class="edit-btn">Edit</button></a>
-                {% if is_admin %}
-                <form method="POST" action="/delete" class="delete-form" style="display:inline;">
-                    <input type="hidden" name="id" value="{{ row[0] }}">
-                    <button type="submit" class="delete-btn">Padam</button>
-                </form>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p style="text-align:center;">Words not found :(</p>
-    {% endif %}
-
-    <!-- Add Word Form -->
-    <div class="add-form">
-        <h2>Add New Word</h2>
-        {% if not is_admin %}
-        <div class="approval-notice">
-            Note: Your submissions will need approval by an administrator before appearing in the dictionary.
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('quiz') }}" style="padding: 10px 20px; background: #00d4ff; color: #1f1c2c; border-radius: 10px; text-decoration: none; font-weight: bold;">
+                Cuba lagi
+            </a>
         </div>
-        {% endif %}
-        <form method="POST" action="/add">
-            <input type="text" name="word" placeholder="Word" required>
-            <input type="text" name="definition" placeholder="Meaning" required>
-            <input type="text" name="dialect" placeholder="Dialect" required>
-            <button type="submit">Add</button>
-        </form>
-    </div>
-
-</body>
+        
+    </body>
 </html>
