@@ -174,9 +174,7 @@
         <li><a class="active" href="/">Home</a></li>
        <li><a href="/quiz">Quiz</a></li>
         <li><a href="#contact">Contact</a></li>
-        <li><a href="#favourites">Favourites</a></li>
-        <li><a href="#more">More</a></li>
-
+       
         {% if session.get('logged_in') %}
         <li class="right">
             <a href="/logout">Logout ({{ session.get('username') }}{% if is_admin %} <span class="admin-badge">Admin</span>{% endif %})</a>
