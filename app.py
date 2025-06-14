@@ -427,6 +427,7 @@ def get_db():
     db.row_factory = sqlite3.Row
     return db
 
+# sorting dialect
 @app.route('/', methods=['GET'])
 def dialect():
     if not session.get('logged_in'):
@@ -453,8 +454,7 @@ def dialect():
     rows = cursor.fetchall()
     conn.close()
 
-    is_admin_user = is_admin()
-    return render_template("home.html", words=rows, is_admin=is_admin_user)
+    return render_template("home.html", words=rows, selected_dialect=selected_dialect, query=query, is_admin=is_admin())
 
 @app.route('/quiz')
 def quiz():

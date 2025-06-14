@@ -225,8 +225,8 @@
 <form method="GET" action="/">
   <label for="dialect">Pilih dialect:</label>
  <select name="dialect" id="dialect" onchange="this.form.submit()">
-  <option value="">-- Semua Dialek --</option>
-  <option value="Sarawak Malay" {% if request.args.get('dialect') == 'Sarawak_Malay' %}selected{% endif %}>Sarawak Malay</option>
+    <option value="" {% if selected_dialect = "" %}selected{% endif %}>--Semua Dialek--</option>   
+   <option value="Sarawak Malay" {% if request.args.get('dialect') == 'Sarawak Malay' %}selected{% endif %}>Sarawak Malay</option>
   <option value="Melanau" {% if request.args.get('dialect') == 'Melanau' %}selected{% endif %}>Melanau</option>
   <option value="Bidayuh" {% if request.args.get('dialect') == 'Bidayuh' %}selected{% endif %}>Bidayuh</option>
   <option value="Iban" {% if request.args.get('dialect') == 'Iban' %}selected{% endif %}>Iban</option>
