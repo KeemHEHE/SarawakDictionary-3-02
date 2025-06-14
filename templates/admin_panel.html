@@ -216,7 +216,7 @@
                         <!-- User is not admin, show promote button -->
                         <form method="POST" action="/promote_user" style="display:inline;">
                             <input type="hidden" name="user_id" value="{{ user[0] }}">
-                            <button type="submit" class="btn btn-promote" onclick="return confirm('Adakah anda pasti mahu menjadikan {{ user[1] }} sebagai pentadbir?')">
+                            <button type="submit" class="btn btn-promote" onclick="return confirm('Are you sure you want ot make {{ user[1] }} as admin?')">
                                 Make Admin
                             </button>
                         </form>
@@ -226,11 +226,11 @@
                             <form method="POST" action="/demote_user" style="display:inline;">
                                 <input type="hidden" name="user_id" value="{{ user[0] }}">
                                 <button type="submit" class="btn btn-demote" onclick="return confirm('Are you sure you want to remove admin status? {{ user[1] }}?')">
-                                    Remove Admin
+                                    Remove Admin 
                                 </button>
                             </form>
                         {% else %}
-                            <span style="color: #9ca3af; font-style: italic;">(You) </span>
+                            <span style="color: #9ca3af; font-style: italic;">(You)</span>
                         {% endif %}
                     {% endif %}
                 </td>
