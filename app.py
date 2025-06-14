@@ -509,13 +509,6 @@ def logout():
     flash('Anda telah log keluar')
     return redirect(url_for('login'))
 
-@app.route("/quiz")
-def quiz():
-    return render_template('quiz.html')
-
-@app.route("/quiz_result")
-def quiz_result():
-    return render_template('quiz_result.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -544,3 +537,53 @@ def contact():
         return redirect('/contact')
 
     return render_template('contact.html')
+
+import sqlite3
+import random
+
+@app.route('/quiz')
+def quiz():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+
+    # Fetch all words and meanings
+    cursor.execute("SELECT word, definition FROM words")
+    rows = cursor.fetchall()
+    conn.close()
+
+    # Convert to list of dictionaries
+    word_pool = [{'word': row[0], 'answer': row[1]} for row in rows]
+
+    # Select 5 random questions
+    selected_questions = random.sample(word_pool, min(5, len(word_pool)))
+
+    # Create choices (correct + 3 wrong)
+    questions = []
+    for q in selected_questions:
+        wrong_choices = random.sample(
+            [w['answer'] for w in word_pool if w['answer'] != q['answer']], 3)
+        choices = wrong_choices + [q['answer']]
+        random.shuffle(choices)
+        questions.append({
+            'word': q['word'],
+            'choices': choices,
+            'answer': q['answer']
+        })
+
+    return render_template('quiz.html', questions=questions)
+
+@app.route('/quiz_result', methods=['POST'])
+def quiz_result():
+    score = 0
+    total = len(request.form) // 2  # Each question has 1 radio + 1 hidden input
+
+    for i in range(total):
+        selected = request.form.get(f'q{i}')
+        correct = request.form.get(f'answer{i}')
+        if selected == correct:
+            score += 1
+
+    return render_template('quiz_result.html', score=score, total=total)
