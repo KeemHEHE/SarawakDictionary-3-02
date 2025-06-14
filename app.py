@@ -521,3 +521,26 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 init_app(app)
+
+from flask import render_template, request, redirect, flash
+import sqlite3
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+
+        # Simpan ke DB
+        conn = sqlite3.connect('sarawak_dictionary.db')  # atau nama database kau
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)",
+                       (name, email, message))
+        conn.commit()
+        conn.close()
+
+        flash('Terima kasih! Mesej anda telah dihantar.')
+        return redirect('/contact')
+
+    return render_template('contact.html')
