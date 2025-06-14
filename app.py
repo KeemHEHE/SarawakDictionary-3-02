@@ -1,6 +1,5 @@
 import sqlite3
 import click
-import random
 from flask import Flask, request, redirect, url_for, render_template, flash, session, g, current_app
 from datetime import datetime
 
@@ -196,8 +195,14 @@ def admin_panel():
     ''')
     pending_edits = cursor.fetchall()
     
+    # Get all users for user management
+    cursor.execute('SELECT id, username, admin FROM users ORDER BY username')
+    all_users = cursor.fetchall()
+    
     conn.close()
-    return render_template('admin_panel.html', pending_words=pending_words, pending_edits=pending_edits)
+    
+    return render_template('admin_panel.html', pending_words=pending_words, 
+                         pending_edits=pending_edits, all_users=all_users)
 
 @app.route('/approve', methods=['POST'])
 def approve_word():
@@ -286,6 +291,90 @@ def reject_edit():
     conn.close()
     
     flash('Permintaan pengeditan ditolak')
+    return redirect(url_for('admin_panel'))
+
+# User Management Routes
+@app.route('/promote_user', methods=['POST'])
+def promote_user():
+    if not is_admin():
+        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        return redirect(url_for('index'))
+    
+    user_id = request.form['user_id']
+    current_user = session.get('username')
+    
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    
+    # Get the username of the user being promoted
+    cursor.execute('SELECT username FROM users WHERE id = ?', (user_id,))
+    user_data = cursor.fetchone()
+    
+    if not user_data:
+        flash('Pengguna tidak dijumpai')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    username = user_data[0]
+    
+    # Prevent self-demotion check (though this is for promotion)
+    if username == current_user:
+        flash('Anda tidak boleh mengubah status admin anda sendiri')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    # Promote user to admin
+    cursor.execute('UPDATE users SET admin = 1 WHERE id = ?', (user_id,))
+    conn.commit()
+    conn.close()
+    
+    flash(f'Pengguna {username} telah dijadikan pentadbir')
+    return redirect(url_for('admin_panel'))
+
+@app.route('/demote_user', methods=['POST'])
+def demote_user():
+    if not is_admin():
+        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        return redirect(url_for('index'))
+    
+    user_id = request.form['user_id']
+    current_user = session.get('username')
+    
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    
+    # Get the username of the user being demoted
+    cursor.execute('SELECT username FROM users WHERE id = ?', (user_id,))
+    user_data = cursor.fetchone()
+    
+    if not user_data:
+        flash('Pengguna tidak dijumpai')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    username = user_data[0]
+    
+    # Prevent self-demotion
+    if username == current_user:
+        flash('Anda tidak boleh menyahaktif status admin anda sendiri')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    # Check if this would leave no admins
+    cursor.execute('SELECT COUNT(*) FROM users WHERE admin = 1')
+    admin_count = cursor.fetchone()[0]
+    
+    if admin_count <= 1:
+        flash('Tidak boleh menyahaktif pentadbir terakhir. Mesti ada sekurang-kurangnya satu pentadbir.')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    # Demote user from admin
+    cursor.execute('UPDATE users SET admin = 0 WHERE id = ?', (user_id,))
+    conn.commit()
+    conn.close()
+    
+    flash(f'Status pentadbir {username} telah disahaktif')
     return redirect(url_for('admin_panel'))
 
 # Helper function to check if current user is admin
@@ -427,88 +516,39 @@ def get_db():
     db.row_factory = sqlite3.Row
     return db
 
-# sorting dialect
-@app.route('/', methods=['GET'])
-def dialect():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
 
-    query = request.args.get('query', '')
-    selected_dialect = request.args.get('dialect', '')
-
-    conn = sqlite3.connect('sarawak_dictionary.db')
-    cursor = conn.cursor()
-
-    if query and selected_dialect:
-        cursor.execute("SELECT id, word, definition, dialect FROM words WHERE word LIKE ? AND dialect = ? AND approved = 1",
-                       (f"%{query}%", selected_dialect))
-    elif query:
-        cursor.execute("SELECT id, word, definition, dialect FROM words WHERE word LIKE ? AND approved = 1",
-                       (f"%{query}%",))
-    elif selected_dialect:
-        cursor.execute("SELECT id, word, definition, dialect FROM words WHERE dialect = ? AND approved = 1",
-                       (selected_dialect,))
-    else:
-        cursor.execute("SELECT id, word, definition, dialect FROM words WHERE approved = 1")
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    return render_template("home.html", words=rows, selected_dialect=selected_dialect, query=query, is_admin=is_admin())
-
-@app.route('/quiz')
+@app.route("/quiz")
 def quiz():
-    conn = sqlite3.connect('sarawak_dictionary.db')
-    cursor = conn.cursor()
-    
-    # 5 random questions
-    cursor.execute("SELECT word, definition FROM words ORDER BY RANDOM() LIMIT 5")
-    rows = cursor.fetchall()
+    return render_template('quiz.html')
 
-    questions = []
-    for word, correct_meaning in rows:
-        # 3 meaning that is wrong
-        cursor.execute("SELECT definition FROM words WHERE definition != ? ORDER BY RANDOM() LIMIT 3", (correct_meaning,))
-        wrongs = [row[0] for row in cursor.fetchall()]
-        
-        choices = wrongs + [correct_meaning]
-        random.shuffle(choices)
-        
-        questions.append({
-            "word": word,
-            "choices": choices,
-            "answer": correct_meaning
-        })
-
-    conn.close()
-    return render_template('quiz.html', questions=questions)
-
-@app.route('/quiz-result', methods=['POST'])
+@app.route("/quiz_result")
 def quiz_result():
-    score = 0
-    total = 0
-    results = []
+    return render_template('quiz_result.html')
 
-    for i in range(total): 
-        user_answer = request.form.get(f'q{i}')
-        correct_answer = request.form.get(f'answer{i}')
-        if not correct_answer:
-            break
-        total += 1
-        results.append({
-            "index": i + 1,
-            "user": user_answer,
-            "correct": correct_answer,
-            "status": "✔️" if user_answer == correct_answer else "❌"
-        })
-        if user_answer == correct_answer:
-            score += 1
-
-    return render_template('quiz_result.html', score=score, total=total, results=results)
-
-
-
-if __name__ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True)
 
 init_app(app)
+
+from flask import render_template, request, redirect, flash
+import sqlite3
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+
+        # Simpan ke DB
+        conn = sqlite3.connect('sarawak_dictionary.db')  # atau nama database kau
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)",
+                       (name, email, message))
+        conn.commit()
+        conn.close()
+
+        flash('Terima kasih! Mesej anda telah dihantar.')
+        return redirect('/contact')
+
+    return render_template('contact.html')
