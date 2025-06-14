@@ -172,8 +172,8 @@
     <!-- Navigation Bar -->
     <ul class="nav">
         <li><a class="active" href="/">Home</a></li>
-        <li><a href="#quiz">Quiz</a></li>
-        <li><a href="/contact">Contact</a></li>
+       <li><a href="{{ url_for('quiz') }}">Quiz</a></li>
+        <li><a href="#contact">Contact</a></li>
         <li><a href="#favourites">Favourites</a></li>
         <li><a href="#more">More</a></li>
 
@@ -218,6 +218,9 @@
         <a href="/admin"><button type="button" class="admin-btn">Admin Panel</button></a>
         {% endif %}
     </form>
+
+<h1>Senarai Perkataan</h1>
+
 
     <!-- Dictionary Table -->
     {% if rows %}
