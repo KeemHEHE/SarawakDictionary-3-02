@@ -195,9 +195,14 @@ def admin_panel():
     ''')
     pending_edits = cursor.fetchall()
     
+    # Get all users for user management
+    cursor.execute('SELECT id, username, admin FROM users ORDER BY username')
+    all_users = cursor.fetchall()
+    
     conn.close()
     
-    return render_template('admin_panel.html', pending_words=pending_words, pending_edits=pending_edits)
+    return render_template('admin_panel.html', pending_words=pending_words, 
+                         pending_edits=pending_edits, all_users=all_users)
 
 @app.route('/approve', methods=['POST'])
 def approve_word():
@@ -286,6 +291,90 @@ def reject_edit():
     conn.close()
     
     flash('Permintaan pengeditan ditolak')
+    return redirect(url_for('admin_panel'))
+
+# User Management Routes
+@app.route('/promote_user', methods=['POST'])
+def promote_user():
+    if not is_admin():
+        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        return redirect(url_for('index'))
+    
+    user_id = request.form['user_id']
+    current_user = session.get('username')
+    
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    
+    # Get the username of the user being promoted
+    cursor.execute('SELECT username FROM users WHERE id = ?', (user_id,))
+    user_data = cursor.fetchone()
+    
+    if not user_data:
+        flash('Pengguna tidak dijumpai')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    username = user_data[0]
+    
+    # Prevent self-demotion check (though this is for promotion)
+    if username == current_user:
+        flash('Anda tidak boleh mengubah status admin anda sendiri')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    # Promote user to admin
+    cursor.execute('UPDATE users SET admin = 1 WHERE id = ?', (user_id,))
+    conn.commit()
+    conn.close()
+    
+    flash(f'Pengguna {username} telah dijadikan pentadbir')
+    return redirect(url_for('admin_panel'))
+
+@app.route('/demote_user', methods=['POST'])
+def demote_user():
+    if not is_admin():
+        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        return redirect(url_for('index'))
+    
+    user_id = request.form['user_id']
+    current_user = session.get('username')
+    
+    conn = sqlite3.connect('sarawak_dictionary.db')
+    cursor = conn.cursor()
+    
+    # Get the username of the user being demoted
+    cursor.execute('SELECT username FROM users WHERE id = ?', (user_id,))
+    user_data = cursor.fetchone()
+    
+    if not user_data:
+        flash('Pengguna tidak dijumpai')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    username = user_data[0]
+    
+    # Prevent self-demotion
+    if username == current_user:
+        flash('Anda tidak boleh menyahaktif status admin anda sendiri')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    # Check if this would leave no admins
+    cursor.execute('SELECT COUNT(*) FROM users WHERE admin = 1')
+    admin_count = cursor.fetchone()[0]
+    
+    if admin_count <= 1:
+        flash('Tidak boleh menyahaktif pentadbir terakhir. Mesti ada sekurang-kurangnya satu pentadbir.')
+        conn.close()
+        return redirect(url_for('admin_panel'))
+    
+    # Demote user from admin
+    cursor.execute('UPDATE users SET admin = 0 WHERE id = ?', (user_id,))
+    conn.commit()
+    conn.close()
+    
+    flash(f'Status pentadbir {username} telah disahaktif')
     return redirect(url_for('admin_panel'))
 
 # Helper function to check if current user is admin
@@ -420,7 +509,15 @@ def logout():
     flash('Anda telah log keluar')
     return redirect(url_for('login'))
 
-if __name__ == '_main_':
+@app.route("/quiz")
+def quiz():
+    return render_template('quiz.html')
+
+@app.route("/quiz_result")
+def quiz_result():
+    return render_template('quiz_result.html')
+
+if __name__ == '__main__':
     app.run(debug=True)
 
 init_app(app)
