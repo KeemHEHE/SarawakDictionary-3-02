@@ -1,174 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Edit Word - Sarawak Dictionary</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1e1e2f;
-            color: #f0f0f0;
-            padding: 40px;
-            margin: 0;
-        }
-        h1 {
-            color: #00ccff;
-            margin-top: 20px;
-        }
-        input[type=text] {
-            padding: 10px;
-            width: 250px;
-            border-radius: 8px;
-            border: none;
-            margin-right: 10px;
-            margin-bottom: 15px;
-        }
-        button, .back-btn {
-            padding: 10px 20px;
-            background-color: #00ccff;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-        button:hover, .back-btn:hover {
-            background-color: #00b8e6;
-        }
-        .edit-form {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #33334d;
-            border-radius: 8px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #00ccff;
-        }
-        .user-status {
-          float: right;
-          margin: 15px;
-          color: #333;
-        }
-        .flash-messages {
-          list-style: none;
-          padding: 10px;
-          margin: 10px 0;
-          background-color: #dff0d8;
-          border-left: 6px solid #00ccff;
-          color: #00ccff;
-        }
-        
-        /* Navigation Bar Styles */
-        ul.nav {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #333;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Word – Sarawak Dictionary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #060d1a; color: #e2e8f0; min-height: 100vh; }
 
-        ul.nav li {
-            float: left;
-        }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 58px; background: #0c1628; border-bottom: 1px solid #1a3152; position: sticky; top: 0; z-index: 100; }
+    .nav-brand { font-size: 17px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { color: #64748b; text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 14px; transition: color .2s, background .2s; }
+    .nav-links a:hover, .nav-links a.active { color: #e2e8f0; background: #122040; }
+    .nav-right { display: flex; gap: 8px; align-items: center; }
+    .btn-nav { padding: 6px 16px; font-size: 13px; font-weight: 500; border: 1px solid #1a3152; border-radius: 7px; background: transparent; color: #94a3b8; cursor: pointer; text-decoration: none; transition: border-color .2s, color .2s; }
+    .btn-nav:hover { border-color: #3b82f6; color: #60a5fa; }
+    .admin-badge { background: #1d4ed8; color: #bfdbfe; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 6px; }
 
-        ul.nav li.right {
-            float: right;
-        }
+    .main { max-width: 600px; margin: 0 auto; padding: 40px 24px; }
+    h1 { font-size: 24px; font-weight: 700; color: #60a5fa; margin-bottom: 24px; }
 
-        ul.nav li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 50px;
-            text-decoration: none;
-        }
+    .flash-messages { list-style: none; background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; color: #86efac; font-size: 14px; }
 
-        ul.nav li a:hover {
-            background-color: #111;
-        }
-        
-        /* Admin badge */
-        .admin-badge {
-            background-color: #f44336;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-left: 10px;
-            font-size: 12px;
-        }
-        
-        /* Approval notice */
-        .approval-notice {
-            background-color: #33334d;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
-            color: #ffcc00;
-            font-size: 14px;
-        }
-    </style>
+    .card { background: #0c1628; border: 1px solid #1a3152; border-radius: 12px; padding: 28px; }
+
+    .notice { background: rgba(59,130,246,.07); border: 1px solid rgba(59,130,246,.2); color: #93c5fd; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; }
+
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: #94a3b8; margin-bottom: 8px; }
+    input[type="text"] { width: 100%; padding: 11px 14px; background: #0a1120; border: 1px solid #1a3152; border-radius: 8px; color: #e2e8f0; font-size: 14px; font-family: inherit; outline: none; transition: border-color .2s, box-shadow .2s; }
+    input[type="text"]:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+
+    .form-actions { display: flex; gap: 10px; margin-top: 8px; }
+    .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; transition: background .2s; text-decoration: none; display: inline-block; }
+    .btn-blue { background: #3b82f6; color: #fff; }
+    .btn-blue:hover { background: #2563eb; }
+    .btn-gray { background: #1e293b; color: #94a3b8; }
+    .btn-gray:hover { background: #0f172a; color: #e2e8f0; }
+  </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <ul class="nav">
-        <li><a href="/">Home</a></li>
-        <li><a href="#quiz">Quiz</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="#favourites">Favourites</a></li>
-        <li><a href="#more">More</a></li>
 
-        {% if session.get('logged_in') %}
-        <li class="right">
-            <a href="/logout">Logout ({{ session.get('username') }}{% if is_admin %} <span class="admin-badge">Admin</span>{% endif %})</a>
-        </li>
-        {% if is_admin %}
-        <li class="right">
-            <a href="/admin">Admin Panel</a>
-        </li>
-        {% endif %}
-        {% else %}
-        <li class="right">
-            <a href="/login">Sign In</a>
-        </li>
-        {% endif %}
+  <nav>
+    <a href="/" class="nav-brand">Sarawak Dictionary</a>
+    <ul class="nav-links">
+      <li><a href="/" class="active">Home</a></li>
+      <li><a href="/quiz">Quiz</a></li>
+      <li><a href="/contact">Contact</a></li>
     </ul>
+    <div class="nav-right">
+      {% if session.get('logged_in') %}
+        {% if is_admin %}<a href="/admin" class="btn-nav">Admin Panel</a>{% endif %}
+        <a href="/logout" class="btn-nav">Logout ({{ session.get('username') }}{% if is_admin %}<span class="admin-badge">Admin</span>{% endif %})</a>
+      {% else %}
+        <a href="/login" class="btn-nav">Sign In</a>
+      {% endif %}
+    </div>
+  </nav>
 
+  <div class="main">
     {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class="flash-messages">
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+      {% if messages %}
+        <ul class="flash-messages">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>
+      {% endif %}
     {% endwith %}
 
-    <!-- Edit Form -->
     <h1>Edit Word</h1>
-    <a href="/"><button class="back-btn">Back to Dictionary</button></a>
-    
-    <div class="edit-form">
-        {% if not is_admin %}
-        <div class="approval-notice">
-            Note: Your edit will need approval by an administrator before appearing in the dictionary.
+
+    <div class="card">
+      {% if not is_admin %}
+        <div class="notice">Your edit will need approval by an admin before it appears in the dictionary.</div>
+      {% endif %}
+
+      <form method="POST" action="/update">
+        <input type="hidden" name="id" value="{{ word[0] }}">
+
+        <div class="form-group">
+          <label for="word">Word</label>
+          <input type="text" id="word" name="word" value="{{ word[1] }}" required>
         </div>
-        {% endif %}
-        
-        <form method="POST" action="/update">
-            <input type="hidden" name="id" value="{{ word[0] }}">
-            
-            <label for="word">Word:</label>
-            <input type="text" id="word" name="word" value="{{ word[1] }}" required>
-            
-            <label for="definition">Definition:</label>
-            <input type="text" id="definition" name="definition" value="{{ word[2] }}" required>
-            
-            <label for="dialect">Dialect:</label>
-            <input type="text" id="dialect" name="dialect" value="{{ word[3] }}" required>
-            
-            <button type="submit">Confirm</button>
-        </form>
+        <div class="form-group">
+          <label for="definition">Definition</label>
+          <input type="text" id="definition" name="definition" value="{{ word[2] }}" required>
+        </div>
+        <div class="form-group">
+          <label for="dialect">Dialect</label>
+          <input type="text" id="dialect" name="dialect" value="{{ word[3] }}" required>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-blue">Save Changes</button>
+          <a href="/" class="btn btn-gray">Cancel</a>
+        </div>
+      </form>
     </div>
+  </div>
+
 </body>
 </html>

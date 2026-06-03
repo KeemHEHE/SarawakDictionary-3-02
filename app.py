@@ -50,9 +50,9 @@ def add():
     conn.close()
     
     if approved:
-        flash('Perkataan ditambah dengan jayanya!')
+        flash('Word added successfully!')
     else:
-        flash('Perkataan dihantar untuk kelulusan. Ia akan muncul selepas semakan pentadbir.')
+        flash('Word submitted for approval. It will appear after admin review.')
     
     return redirect(url_for('index'))
 
@@ -65,17 +65,17 @@ def jawapan():
 def delete():
     # Only allow admin to delete words
     if not is_admin():
-        flash('Kebenaran ditolak: Hanya pentadbir boleh memadamkan entri.')
+        flash('Permission denied: Only admins can delete entries.')
         return redirect(url_for('index'))
-    
+
     word_id = request.form['id']
     conn = sqlite3.connect('sarawak_dictionary.db')
     cursor = conn.cursor()
     cursor.execute("DELETE FROM words WHERE id = ?", (word_id,))
     conn.commit()
     conn.close()
-    
-    flash('Entri dipadam dengan jayanya')
+
+    flash('Entry deleted successfully.')
     return redirect(url_for('index'))
 
 @app.route('/edit/<int:word_id>', methods=['GET'])
@@ -88,7 +88,7 @@ def edit(word_id):
     conn.close()
     
     if not word:
-        flash('Entri tidak dijumpai')
+        flash('Entry not found.')
         return redirect(url_for('index'))
     
     # Both admin and normal users can access the edit page
@@ -119,7 +119,7 @@ def update():
         conn.commit()
         conn.close()
         
-        flash('Entri dikemaskini dengan jayanya')
+        flash('Entry updated successfully.')
     else:
         # For normal users, create a pending edit
         # First, get the original word data
@@ -128,7 +128,7 @@ def update():
         
         if not original:
             conn.close()
-            flash('Entri asal tidak dijumpai')
+            flash('Original entry not found.')
             return redirect(url_for('index'))
         
         # Create pending_edits table if it doesn't exist
@@ -152,7 +152,7 @@ def update():
         conn.commit()
         conn.close()
         
-        flash('Permintaan pengeditan telah dihantar untuk kelulusan pentadbir')
+        flash('Edit request submitted for admin approval.')
     
     return redirect(url_for('index'))
 
@@ -160,7 +160,7 @@ def update():
 @app.route('/admin', methods=['GET'])
 def admin_panel():
     if not is_admin():
-        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        flash('Permission denied: Admin access required.')
         return redirect(url_for('index'))
     
     conn = sqlite3.connect('sarawak_dictionary.db')
@@ -207,7 +207,7 @@ def admin_panel():
 @app.route('/approve', methods=['POST'])
 def approve_word():
     if not is_admin():
-        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        flash('Permission denied: Admin access required.')
         return redirect(url_for('index'))
     
     word_id = request.form['id']
@@ -217,13 +217,13 @@ def approve_word():
     conn.commit()
     conn.close()
     
-    flash('Perkataan diluluskan dan ditambah ke kamus')
+    flash('Word approved and added to the dictionary.')
     return redirect(url_for('admin_panel'))
 
 @app.route('/reject', methods=['POST'])
 def reject_word():
     if not is_admin():
-        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        flash('Permission denied: Admin access required.')
         return redirect(url_for('index'))
     
     word_id = request.form['id']
@@ -233,13 +233,13 @@ def reject_word():
     conn.commit()
     conn.close()
     
-    flash('Sumbangan ditolak dan dipadamkan')
+    flash('Submission rejected and removed.')
     return redirect(url_for('admin_panel'))
 
 @app.route('/approve_edit', methods=['POST'])
 def approve_edit():
     if not is_admin():
-        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        flash('Permission denied: Admin access required.')
         return redirect(url_for('index'))
     
     edit_id = request.form['edit_id']
@@ -267,9 +267,9 @@ def approve_edit():
         cursor.execute("DELETE FROM pending_edits WHERE id = ?", (edit_id,))
         
         conn.commit()
-        flash('Pengeditan diluluskan dan dikemaskini')
+        flash('Edit approved and applied.')
     else:
-        flash('Permintaan pengeditan tidak dijumpai')
+        flash('Edit request not found.')
     
     conn.close()
     return redirect(url_for('admin_panel'))
@@ -277,7 +277,7 @@ def approve_edit():
 @app.route('/reject_edit', methods=['POST'])
 def reject_edit():
     if not is_admin():
-        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        flash('Permission denied: Admin access required.')
         return redirect(url_for('index'))
     
     edit_id = request.form['edit_id']
@@ -290,14 +290,14 @@ def reject_edit():
     conn.commit()
     conn.close()
     
-    flash('Permintaan pengeditan ditolak')
+    flash('Edit request rejected.')
     return redirect(url_for('admin_panel'))
 
 # User Management Routes
 @app.route('/promote_user', methods=['POST'])
 def promote_user():
     if not is_admin():
-        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        flash('Permission denied: Admin access required.')
         return redirect(url_for('index'))
     
     user_id = request.form['user_id']
@@ -311,7 +311,7 @@ def promote_user():
     user_data = cursor.fetchone()
     
     if not user_data:
-        flash('Pengguna tidak dijumpai')
+        flash('User not found.')
         conn.close()
         return redirect(url_for('admin_panel'))
     
@@ -319,7 +319,7 @@ def promote_user():
     
     # Prevent self-demotion check (though this is for promotion)
     if username == current_user:
-        flash('Anda tidak boleh mengubah status admin anda sendiri')
+        flash('You cannot change your own admin status.')
         conn.close()
         return redirect(url_for('admin_panel'))
     
@@ -328,13 +328,13 @@ def promote_user():
     conn.commit()
     conn.close()
     
-    flash(f'Pengguna {username} telah dijadikan pentadbir')
+    flash(f'User {username} has been made an admin.')
     return redirect(url_for('admin_panel'))
 
 @app.route('/demote_user', methods=['POST'])
 def demote_user():
     if not is_admin():
-        flash('Kebenaran ditolak: Akses pentadbir diperlukan')
+        flash('Permission denied: Admin access required.')
         return redirect(url_for('index'))
     
     user_id = request.form['user_id']
@@ -348,7 +348,7 @@ def demote_user():
     user_data = cursor.fetchone()
     
     if not user_data:
-        flash('Pengguna tidak dijumpai')
+        flash('User not found.')
         conn.close()
         return redirect(url_for('admin_panel'))
     
@@ -356,7 +356,7 @@ def demote_user():
     
     # Prevent self-demotion
     if username == current_user:
-        flash('Anda tidak boleh menyahaktif status admin anda sendiri')
+        flash('You cannot remove your own admin status.')
         conn.close()
         return redirect(url_for('admin_panel'))
     
@@ -365,7 +365,7 @@ def demote_user():
     admin_count = cursor.fetchone()[0]
     
     if admin_count <= 1:
-        flash('Tidak boleh menyahaktif pentadbir terakhir. Mesti ada sekurang-kurangnya satu pentadbir.')
+        flash('Cannot remove the last admin. There must be at least one admin.')
         conn.close()
         return redirect(url_for('admin_panel'))
     
@@ -374,7 +374,7 @@ def demote_user():
     conn.commit()
     conn.close()
     
-    flash(f'Status pentadbir {username} telah disahaktif')
+    flash(f'Admin status removed from {username}.')
     return redirect(url_for('admin_panel'))
 
 # Helper function to check if current user is admin
@@ -455,7 +455,7 @@ def signup():
         
         if existing_user:
             conn.close()
-            flash('Username sudah wujud. Sila pilih yang lain.')
+            flash('Username already exists. Please choose another.')
             return redirect(url_for('signup'))
         
         # Insert new user (default admin=0)
@@ -463,7 +463,7 @@ def signup():
         conn.commit()
         conn.close()
         
-        flash('Pendaftaran berjaya! Sila log masuk.')
+        flash('Registration successful! Please sign in.')
         return redirect(url_for('login'))
     
     return render_template('signup.html')
@@ -494,10 +494,10 @@ def login():
         if user:
             session['logged_in'] = True
             session['username'] = username
-            flash('Log masuk berjaya! Selamat datang, ' + username)
+            flash('Logged in successfully! Welcome, ' + username)
             return redirect(url_for('index'))
         else:
-            flash('Username atau kata laluan tidak sah')
+            flash('Invalid username or password.')
             return redirect(url_for('login'))
     
     return render_template('sign_in.html')
@@ -506,7 +506,7 @@ def login():
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
-    flash('Anda telah log keluar')
+    flash('You have been logged out.')
     return redirect(url_for('login'))
 
 
@@ -533,7 +533,7 @@ def contact():
         conn.commit()
         conn.close()
 
-        flash('Terima kasih! Mesej anda telah dihantar.')
+        flash('Thank you! Your message has been sent.')
         return redirect('/contact')
 
     return render_template('contact.html')
@@ -578,12 +578,20 @@ def quiz():
 @app.route('/quiz_result', methods=['POST'])
 def quiz_result():
     score = 0
-    total = len(request.form) // 2  # Each question has 1 radio + 1 hidden input
+    total = len(request.form) // 2
 
+    results = []
     for i in range(total):
         selected = request.form.get(f'q{i}')
         correct = request.form.get(f'answer{i}')
-        if selected == correct:
+        is_correct = selected == correct
+        if is_correct:
             score += 1
+        results.append({
+            'index': i + 1,
+            'user': selected or '(no answer)',
+            'correct': correct,
+            'status': 'Correct' if is_correct else 'Wrong'
+        })
 
-    return render_template('quiz_result.html', score=score, total=total)
+    return render_template('quiz_result.html', score=score, total=total, results=results)

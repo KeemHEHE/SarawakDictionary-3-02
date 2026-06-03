@@ -1,67 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Sarawak Dictionary</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1e1e2f;
-            color: #f0f0f0;
-            padding: 40px;
-        }
-        h1 {
-            color: #00ccff;
-        }
-        input[type=text] {
-            padding: 10px;
-            width: 250px;
-            border-radius: 8px;
-            border: none;
-            margin-right: 10px;
-        }
-        button, .delete-btn {
-            padding: 10px 20px;
-            background-color: #00ccff;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        button:hover, .delete-btn:hover {
-            background-color: #00b8e6;
-        }
-        table {
-            margin-top: 30px;
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #2a2a40;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #444;
-        }
-        th {
-            background-color: #33334d;
-            color: #00ccff;
-        }
-        .add-form {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 2px solid #444;
-        }
-        .delete-form {
-            display: inline;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No Result – Sarawak Dictionary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #060d1a; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 58px; background: #0c1628; border-bottom: 1px solid #1a3152; }
+    .nav-brand { font-size: 17px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+    .btn-nav { padding: 6px 16px; font-size: 13px; font-weight: 500; border: 1px solid #1a3152; border-radius: 7px; background: transparent; color: #94a3b8; cursor: pointer; text-decoration: none; transition: border-color .2s, color .2s; }
+    .btn-nav:hover { border-color: #3b82f6; color: #60a5fa; }
+
+    .page { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
+    .card { background: #0c1628; border: 1px solid #1a3152; border-radius: 16px; padding: 48px 40px; text-align: center; max-width: 420px; }
+    .icon { font-size: 48px; margin-bottom: 20px; }
+    h2 { font-size: 20px; font-weight: 600; color: #60a5fa; margin-bottom: 12px; }
+    p { font-size: 15px; color: #475569; margin-bottom: 28px; line-height: 1.6; }
+    p strong { color: #93c5fd; }
+    a { display: inline-block; padding: 10px 24px; background: #3b82f6; color: #fff; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; transition: background .2s; }
+    a:hover { background: #2563eb; }
+  </style>
 </head>
 <body>
-    <h1>Sarawak Dictionary</h1>
-    <p>
-        Tiada jawapan bagi: {{ answer }}
-    </p>
-    
+
+  <nav>
+    <a href="/" class="nav-brand">Sarawak Dictionary</a>
+    <a href="/" class="btn-nav">← Back to Dictionary</a>
+  </nav>
+
+  <div class="page">
+    <div class="card">
+      <div class="icon">🔍</div>
+      <h2>No Result Found</h2>
+      <p>No answer found for: <strong>{{ answer }}</strong></p>
+      <a href="/">Back to Dictionary</a>
+    </div>
+  </div>
+
 </body>
 </html>

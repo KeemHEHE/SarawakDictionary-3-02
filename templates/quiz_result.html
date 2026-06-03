@@ -1,221 +1,96 @@
 <!DOCTYPE html>
-<html>
-    <meta charset="UTF-8">
-    <title>Sarawak Dictionary</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Result – Sarawak Dictionary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #060d1a; color: #e2e8f0; min-height: 100vh; }
 
-    body {
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(to right, #1f1c2c, #928dab);
-        color: #f5f5f5;
-        margin: 0;
-        padding: 40px;
-    }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 58px; background: #0c1628; border-bottom: 1px solid #1a3152; }
+    .nav-brand { font-size: 17px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { color: #64748b; text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 14px; transition: color .2s, background .2s; }
+    .nav-links a:hover, .nav-links a.active { color: #e2e8f0; background: #122040; }
+    .nav-right { display: flex; gap: 8px; align-items: center; }
+    .btn-nav { padding: 6px 16px; font-size: 13px; font-weight: 500; border: 1px solid #1a3152; border-radius: 7px; background: transparent; color: #94a3b8; cursor: pointer; text-decoration: none; transition: border-color .2s, color .2s; }
+    .btn-nav:hover { border-color: #3b82f6; color: #60a5fa; }
+    .admin-badge { background: #1d4ed8; color: #bfdbfe; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 6px; }
 
-    h1, h2 {
-        color: #facc15;
-        text-align: center;
-        text-shadow: 1px 1px 3px #000;
-    }
+    .main { max-width: 660px; margin: 0 auto; padding: 40px 24px; }
 
-    input[type=text] {
-        padding: 12px;
-        width: 280px;
-        border-radius: 10px;
-        border: none;
-        margin: 10px;
-        background-color: #2d2a42;
-        color: #f5f5f5;
-    }
+    .score-card { background: #0c1628; border: 1px solid #1a3152; border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 28px; }
+    .score-card h1 { font-size: 22px; font-weight: 700; color: #60a5fa; margin-bottom: 20px; }
+    .score-number { font-size: 52px; font-weight: 700; color: #fff; line-height: 1; margin-bottom: 8px; }
+    .score-number span { color: #60a5fa; }
+    .score-label { color: #475569; font-size: 14px; }
 
-    button, .delete-btn, .edit-btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        margin: 5px;
-        font-weight: 600;
-        transition: background 0.3s ease;
-    }
+    .results-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .result-item { background: #0c1628; border: 1px solid #1a3152; border-radius: 10px; padding: 14px 18px; font-size: 14px; }
+    .result-item.correct { border-color: rgba(34,197,94,.3); background: rgba(34,197,94,.05); }
+    .result-item.wrong { border-color: rgba(239,68,68,.3); background: rgba(239,68,68,.05); }
+    .result-q { color: #94a3b8; margin-bottom: 6px; font-size: 13px; }
+    .result-status { font-weight: 600; }
+    .correct .result-status { color: #86efac; }
+    .wrong .result-status { color: #fca5a5; }
+    .result-answer { font-size: 13px; color: #64748b; margin-top: 4px; }
 
-    button {
-        background: #00d4ff;
-        color: #1f1c2c;
-    }
-    button:hover {
-        background: #00aacc;
-        color: white;
-    }
-
-    .edit-btn {
-        background: #22c55e;
-        color: #fff;
-    }
-    .edit-btn:hover {
-        background: #16a34a;
-    }
-
-    .delete-btn {
-        background: #ef4444;
-        color: #fff;
-    }
-    .delete-btn:hover {
-        background: #b91c1c;
-    }
-
-    .admin-btn {
-        background: #facc15;
-        color: #1f1c2c;
-        font-weight: bold;
-    }
-    .admin-btn:hover {
-        background: #eab308;
-    }
-
-    .admin-badge {
-        background: #dc2626;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 12px;
-        color: white;
-    }
-
-    .approval-notice {
-        background-color: #fcd34d;
-        padding: 12px;
-        border-radius: 6px;
-        color: #1e293b;
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .flash-messages {
-        list-style: none;
-        padding: 12px;
-        background: #d1fae5;
-        border-left: 6px solid #10b981;
-        color: #065f46;
-        margin: 20px 0;
-        border-radius: 8px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 30px;
-        background-color: #2d2a42;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-
-    th, td {
-        padding: 14px;
-        text-align: left;
-        border-bottom: 1px solid #444;
-    }
-
-    th {
-        background-color: #6b21a8;
-        color: #fff;
-    }
-
-    ul.nav {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        overflow: hidden;
-        background: #111827;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    }
-
-    ul.nav li {
-        float: left;
-    }
-
-    ul.nav li.right {
-        float: right;
-    }
-
-    ul.nav li a {
-        display: block;
-        color: #facc15;
-        padding: 14px 24px;
-        text-decoration: none;
-        transition: background 0.3s ease;
-    }
-
-    ul.nav li a:hover {
-        background-color: #1f2937;
-    }
-
-    .add-form {
-        margin-top: 40px;
-        text-align: center;
-    }
-
-    @media screen and (max-width: 768px) {
-        input[type=text] {
-            width: 90%;
-        }
-        table, th, td {
-            font-size: 14px;
-        }
-    }
-    </style>
+    .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { padding: 11px 24px; border: none; border-radius: 9px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; text-decoration: none; transition: background .2s; display: inline-block; }
+    .btn-blue { background: #3b82f6; color: #fff; }
+    .btn-blue:hover { background: #2563eb; }
+    .btn-outline { background: transparent; border: 1px solid #1a3152; color: #94a3b8; }
+    .btn-outline:hover { border-color: #3b82f6; color: #60a5fa; }
+  </style>
 </head>
 <body>
 
-    <!-- Navigation Bar -->
-    <ul class="nav">
-        <li><a class="active" href="/">Home</a></li>
-       <li><a href="{{ url_for('quiz') }}">Quiz</a></li>
-        <li><a href="#contact">Contact</a></li>
-        
-        {% if session.get('logged_in') %}
-        <li class="right">
-            <a href="/logout">Logout ({{ session.get('username') }}{% if is_admin %} <span class="admin-badge">Admin</span>{% endif %})</a>
-        </li>
-        {% if is_admin %}
-        <li class="right">
-            <a href="/admin">Admin Panel</a>
-        </li>
-        {% endif %}
-        {% else %}
-        <li class="right">
-            <a href="/signup">Sign Up</a>
-        </li>
-        <li class="right">
-            <a href="/login">Sign In</a>
-        </li>
-        {% endif %}
+  <nav>
+    <a href="/" class="nav-brand">Sarawak Dictionary</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/quiz" class="active">Quiz</a></li>
+      <li><a href="/contact">Contact</a></li>
     </ul>
-<head>
-    <title>Keputusan Quiz</title>
-    </head>
-    <body style="font-family: 'Poppins', sans-serif; background: linear-gradient(to right, #1f1c2c, #928dab); color: #f5f5f5; margin: 0; padding: 40px;">
+    <div class="nav-right">
+      {% if session.get('logged_in') %}
+        {% if is_admin %}<a href="/admin" class="btn-nav">Admin Panel</a>{% endif %}
+        <a href="/logout" class="btn-nav">Logout ({{ session.get('username') }}{% if is_admin %}<span class="admin-badge">Admin</span>{% endif %})</a>
+      {% else %}
+        <a href="/login" class="btn-nav">Sign In</a>
+      {% endif %}
+    </div>
+  </nav>
 
-        <h1 style="color: #facc15; text-align: center; text-shadow: 1px 1px 3px #000;">Keputusan Kuiz</h1>
+  <div class="main">
+    <div class="score-card">
+      <h1>Quiz Results</h1>
+      <div class="score-number">{{ score }}<span>/{{ total }}</span></div>
+      <div class="score-label">
+        {% if score == total %}Excellent! Perfect score!
+        {% elif score >= total * 0.7 %}Good job! Keep it up.
+        {% else %}Keep practising!
+        {% endif %}
+      </div>
+    </div>
 
-        <p style="text-align: center; font-size: 28px; font-weight: bold; color: #facc15; margin-top: 30px;">
-            Skor anda: {{ score }} / {{ total }}
-        </p>
+    <div class="results-list">
+      {% for r in results %}
+      <div class="result-item {% if r.status == 'Correct' %}correct{% else %}wrong{% endif %}">
+        <div class="result-q">Question {{ r.index }}</div>
+        <div class="result-status">{{ r.status }}</div>
+        <div class="result-answer">Your answer: "{{ r.user }}" &nbsp;|&nbsp; Correct answer: "{{ r.correct }}"</div>
+      </div>
+      {% endfor %}
+    </div>
 
-        <ul style="max-width: 600px; margin: 20px auto; padding: 0; list-style: none;">
-            {% for r in results %}
-                <li style="margin-bottom: 10px; background-color: #2d2a42; padding: 12px; border-radius: 8px;">
-                    Soalan {{ r.index }}: {{ r.status }} (Anda jawab: "{{ r.user }}", Jawapan betul: "{{ r.correct }}")
-                </li>
-            {% endfor %}
-        </ul>
+    <div class="actions">
+      <a href="{{ url_for('quiz') }}" class="btn btn-blue">Try Again</a>
+      <a href="/" class="btn btn-outline">Back to Dictionary</a>
+    </div>
+  </div>
 
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="{{ url_for('quiz') }}" style="padding: 10px 20px; background: #00d4ff; color: #1f1c2c; border-radius: 10px; text-decoration: none; font-weight: bold;">
-                Cuba lagi
-            </a>
-        </div>
-        
-    </body>
+</body>
 </html>

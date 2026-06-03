@@ -1,222 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Sarawak Dictionary</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz – Sarawak Dictionary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #060d1a; color: #e2e8f0; min-height: 100vh; }
 
-    body {
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(to right, #1f1c2c, #928dab);
-        color: #f5f5f5;
-        margin: 0;
-        padding: 40px;
-    }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 58px; background: #0c1628; border-bottom: 1px solid #1a3152; position: sticky; top: 0; z-index: 100; }
+    .nav-brand { font-size: 17px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { color: #64748b; text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 14px; transition: color .2s, background .2s; }
+    .nav-links a:hover, .nav-links a.active { color: #e2e8f0; background: #122040; }
+    .nav-right { display: flex; gap: 8px; align-items: center; }
+    .btn-nav { padding: 6px 16px; font-size: 13px; font-weight: 500; border: 1px solid #1a3152; border-radius: 7px; background: transparent; color: #94a3b8; cursor: pointer; text-decoration: none; transition: border-color .2s, color .2s; }
+    .btn-nav:hover { border-color: #3b82f6; color: #60a5fa; }
+    .admin-badge { background: #1d4ed8; color: #bfdbfe; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 6px; }
 
-    h1, h2 {
-        color: #facc15;
-        text-align: center;
-        text-shadow: 1px 1px 3px #000;
-    }
+    .main { max-width: 700px; margin: 0 auto; padding: 36px 24px; }
+    h1 { font-size: 26px; font-weight: 700; color: #60a5fa; margin-bottom: 8px; text-align: center; }
+    .subtitle { text-align: center; color: #475569; font-size: 14px; margin-bottom: 32px; }
 
-    input[type=text] {
-        padding: 12px;
-        width: 280px;
-        border-radius: 10px;
-        border: none;
-        margin: 10px;
-        background-color: #2d2a42;
-        color: #f5f5f5;
-    }
+    .question-card { background: #0c1628; border: 1px solid #1a3152; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+    .question-text { font-size: 16px; font-weight: 600; color: #e2e8f0; margin-bottom: 18px; }
+    .question-num { color: #60a5fa; margin-right: 6px; }
 
-    button, .delete-btn, .edit-btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        margin: 5px;
-        font-weight: 600;
-        transition: background 0.3s ease;
-    }
+    .choices { display: flex; flex-direction: column; gap: 10px; }
+    .choice-label { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #0a1120; border: 1px solid #1a3152; border-radius: 8px; cursor: pointer; transition: border-color .2s, background .2s; font-size: 14px; color: #cbd5e1; }
+    .choice-label:hover { border-color: #3b82f6; background: #0f1e35; color: #e2e8f0; }
+    .choice-label input[type="radio"] { accent-color: #3b82f6; width: 16px; height: 16px; }
 
-    button {
-        background: #00d4ff;
-        color: #1f1c2c;
-    }
-    button:hover {
-        background: #00aacc;
-        color: white;
-    }
+    hr { border: none; border-top: 1px solid #1a3152; margin: 4px 0 20px; }
 
-    .edit-btn {
-        background: #22c55e;
-        color: #fff;
-    }
-    .edit-btn:hover {
-        background: #16a34a;
-    }
+    .submit-btn { display: block; width: 100%; padding: 14px; background: #3b82f6; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background .2s; margin-top: 8px; }
+    .submit-btn:hover { background: #2563eb; }
 
-    .delete-btn {
-        background: #ef4444;
-        color: #fff;
+    @media (max-width: 600px) {
+      .main { padding: 24px 16px; }
+      nav { padding: 0 16px; }
     }
-    .delete-btn:hover {
-        background: #b91c1c;
-    }
-
-    .admin-btn {
-        background: #facc15;
-        color: #1f1c2c;
-        font-weight: bold;
-    }
-    .admin-btn:hover {
-        background: #eab308;
-    }
-
-    .admin-badge {
-        background: #dc2626;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 12px;
-        color: white;
-    }
-
-    .approval-notice {
-        background-color: #fcd34d;
-        padding: 12px;
-        border-radius: 6px;
-        color: #1e293b;
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .flash-messages {
-        list-style: none;
-        padding: 12px;
-        background: #d1fae5;
-        border-left: 6px solid #10b981;
-        color: #065f46;
-        margin: 20px 0;
-        border-radius: 8px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 30px;
-        background-color: #2d2a42;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-
-    th, td {
-        padding: 14px;
-        text-align: left;
-        border-bottom: 1px solid #444;
-    }
-
-    th {
-        background-color: #6b21a8;
-        color: #fff;
-    }
-
-    ul.nav {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        overflow: hidden;
-        background: #111827;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    }
-
-    ul.nav li {
-        float: left;
-    }
-
-    ul.nav li.right {
-        float: right;
-    }
-
-    ul.nav li a {
-        display: block;
-        color: #facc15;
-        padding: 14px 24px;
-        text-decoration: none;
-        transition: background 0.3s ease;
-    }
-
-    ul.nav li a:hover {
-        background-color: #1f2937;
-    }
-
-    .add-form {
-        margin-top: 40px;
-        text-align: center;
-    }
-
-    @media screen and (max-width: 768px) {
-        input[type=text] {
-            width: 90%;
-        }
-        table, th, td {
-            font-size: 14px;
-        }
-    }
-    </style>
+  </style>
 </head>
 <body>
 
-    <!-- Navigation Bar -->
-    <ul class="nav">
-        <li><a class="active" href="/">Home</a></li>
-       <li><a href="/quiz">Quiz</a></li>
-        <li><a href="#contact">Contact</a></li>
-       
-        {% if session.get('logged_in') %}
-        <li class="right">
-            <a href="/logout">Logout ({{ session.get('username') }}{% if is_admin %} <span class="admin-badge">Admin</span>{% endif %})</a>
-        </li>
-        {% if is_admin %}
-        <li class="right">
-            <a href="/admin">Admin Panel</a>
-        </li>
-        {% endif %}
-        {% else %}
-        <li class="right">
-            <a href="/signup">Sign Up</a>
-        </li>
-        <li class="right">
-            <a href="/login">Sign In</a>
-        </li>
-        {% endif %}
+  <nav>
+    <a href="/" class="nav-brand">Sarawak Dictionary</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/quiz" class="active">Quiz</a></li>
+      <li><a href="/contact">Contact</a></li>
     </ul>
+    <div class="nav-right">
+      {% if session.get('logged_in') %}
+        {% if is_admin %}<a href="/admin" class="btn-nav">Admin Panel</a>{% endif %}
+        <a href="/logout" class="btn-nav">Logout ({{ session.get('username') }}{% if is_admin %}<span class="admin-badge">Admin</span>{% endif %})</a>
+      {% else %}
+        <a href="/login" class="btn-nav">Sign In</a>
+      {% endif %}
+    </div>
+  </nav>
 
-    <head>
-        <title> Quiz Page</title>
-    </head>
-    <body>
-        <h1> Welcome To Quiz Page, Goodluck!</h1>
-        <body>
+  <div class="main">
+    <h1>Sarawak Language Quiz</h1>
+    <p class="subtitle">Test your knowledge of Sarawak words and dialects. Good luck!</p>
+
     <form method="POST" action="/quiz_result">
-        {% for q in questions %}
-            <div>
-                <p><strong>{{ loop.index }}. Apa maksud "{{ q.word }}"?</strong></p>
-                {% for choice in q.choices %}
-                    <label>
-                        <input type="radio" name="q{{ loop.index0 }}" value="{{ choice }}"> {{ choice }}
-                    </label><br>
-                {% endfor %}
-                <input type="hidden" name="answer{{ loop.index0 }}" value="{{ q.answer }}">
-            </div>
-            <hr>
-        {% endfor %}
-        <button type="submit">Submit Answer</button>
+      {% for q in questions %}
+      <div class="question-card">
+        <div class="question-text">
+          <span class="question-num">{{ loop.index }}.</span> What is the meaning of "{{ q.word }}"?
+        </div>
+        <div class="choices">
+          {% for choice in q.choices %}
+          <label class="choice-label">
+            <input type="radio" name="q{{ loop.index0 }}" value="{{ choice }}" required> {{ choice }}
+          </label>
+          {% endfor %}
+        </div>
+        <input type="hidden" name="answer{{ loop.index0 }}" value="{{ q.answer }}">
+      </div>
+      {% if not loop.last %}<hr>{% endif %}
+      {% endfor %}
+      <button type="submit" class="submit-btn">Submit Answers</button>
     </form>
+  </div>
+
 </body>
-
-    </body>
-
-    
+</html>

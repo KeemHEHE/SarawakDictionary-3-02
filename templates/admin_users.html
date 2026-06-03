@@ -1,309 +1,146 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengurusan Pengguna - Kamus Sarawak</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            padding: 30px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-        }
-        
-        .header h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .nav-links {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .nav-links a {
-            color: #667eea;
-            text-decoration: none;
-            margin: 0 15px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-links a:hover {
-            background: #667eea;
-            color: white;
-        }
-        
-        .section {
-            margin-bottom: 40px;
-            padding: 20px;
-            border: 1px solid #e1e5e9;
-            border-radius: 10px;
-            background: #f8f9fa;
-        }
-        
-        .section h2 {
-            color: #495057;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e1e5e9;
-        }
-        
-        th {
-            background: #667eea;
-            color: white;
-            font-weight: 600;
-        }
-        
-        tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .admin-badge {
-            background: #28a745;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-        
-        .user-badge {
-            background: #6c757d;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            margin: 2px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #495057;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e1e5e9;
-            border-radius: 6px;
-            font-size: 1em;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .create-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 15px;
-            align-items: end;
-        }
-        
-        .flash-messages {
-            margin-bottom: 20px;
-        }
-        
-        .flash-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px;
-            border-radius: 6px;
-            border-left: 4px solid #28a745;
-            margin-bottom: 10px;
-        }
-        
-        .flash-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left-color: #dc3545;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management – Sarawak Dictionary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #060d1a; color: #e2e8f0; min-height: 100vh; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 58px; background: #0c1628; border-bottom: 1px solid #1a3152; }
+    .nav-brand { font-size: 17px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { color: #64748b; text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 14px; transition: color .2s, background .2s; }
+    .nav-links a:hover { color: #e2e8f0; background: #122040; }
+
+    .main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    h1 { font-size: 24px; font-weight: 700; color: #60a5fa; margin-bottom: 6px; }
+    .subtitle { color: #475569; font-size: 14px; margin-bottom: 28px; }
+    h2 { font-size: 16px; font-weight: 600; color: #93c5fd; margin-bottom: 16px; }
+
+    .section { background: #0c1628; border: 1px solid #1a3152; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+
+    .flash-messages { background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; color: #86efac; font-size: 14px; }
+    .flash-error { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.2); color: #fca5a5; }
+
+    .create-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+    .form-group { flex: 1; min-width: 160px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: #94a3b8; margin-bottom: 7px; }
+    input[type="text"], input[type="password"] { width: 100%; padding: 10px 14px; background: #0a1120; border: 1px solid #1a3152; border-radius: 8px; color: #e2e8f0; font-size: 14px; font-family: inherit; outline: none; transition: border-color .2s, box-shadow .2s; }
+    input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+    input::placeholder { color: #334155; }
+
+    .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; transition: background .2s; text-decoration: none; display: inline-block; }
+    .btn-blue { background: #3b82f6; color: #fff; }
+    .btn-blue:hover { background: #2563eb; }
+    .btn-green { background: #22c55e; color: #fff; }
+    .btn-green:hover { background: #16a34a; }
+    .btn-red { background: #ef4444; color: #fff; }
+    .btn-red:hover { background: #dc2626; }
+    .btn-sm { padding: 6px 13px; font-size: 12px; border-radius: 6px; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    table { width: 100%; border-collapse: collapse; background: #0a1120; border-radius: 8px; overflow: hidden; }
+    th { background: #0f1e35; color: #60a5fa; padding: 11px 14px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1a3152; }
+    td { padding: 12px 14px; border-bottom: 1px solid #0f1e33; color: #cbd5e1; font-size: 14px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #0f1e33; }
+
+    .badge-admin { background: #1d4ed8; color: #bfdbfe; padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; }
+    .badge-user { background: #1e293b; color: #64748b; padding: 3px 8px; border-radius: 5px; font-size: 11px; }
+
+    .instructions li { color: #64748b; font-size: 13px; margin-bottom: 8px; line-height: 1.6; }
+    .instructions strong { color: #93c5fd; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🔐 Pengurusan Pengguna</h1>
-            <p>Panel kawalan untuk menguruskan pengguna dan pentadbir</p>
+
+  <nav>
+    <a href="/" class="nav-brand">Sarawak Dictionary</a>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('index') }}">Home</a></li>
+      <li><a href="{{ url_for('admin_panel') }}">Admin Panel</a></li>
+      <li><a href="{{ url_for('admin_users') }}">User Management</a></li>
+    </ul>
+  </nav>
+
+  <div class="main">
+    <h1>User Management</h1>
+    <p class="subtitle">Manage users and administrators</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-messages">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="section">
+      <h2>Create New Admin</h2>
+      <form method="POST" action="{{ url_for('create_admin') }}">
+        <div class="create-form">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter username" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter password" required>
+          </div>
+          <div>
+            <button type="submit" class="btn btn-blue">Create Admin</button>
+          </div>
         </div>
-        
-        <div class="nav-links">
-            <a href="{{ url_for('index') }}">🏠 Halaman Utama</a>
-            <a href="{{ url_for('admin_panel') }}">📋 Panel Pentadbir</a>
-            <a href="{{ url_for('admin_users') }}">👥 Pengurusan Pengguna</a>
-        </div>
-        
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for message in messages %}
-                        <div class="flash-message">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-        
-        <!-- Create New Admin Section -->
-        <div class="section">
-            <h2>🆕 Cipta Pentadbir Baru</h2>
-            <form method="POST" action="{{ url_for('create_admin') }}">
-                <div class="create-form">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Kata Laluan</label>
-                        <input type="password" id="password" name="password" required>
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary">Cipta Pentadbir</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-        
-        <!-- Users List Section -->
-        <div class="section">
-            <h2>👥 Senarai Semua Pengguna</h2>
-            {% if users %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Status</th>
-                            <th>Tindakan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in users %}
-                        <tr>
-                            <td>{{ user[0] }}</td>
-                            <td>{{ user[1] }}</td>
-                            <td>
-                                {% if user[2] == 1 %}
-                                    <span class="admin-badge">PENTADBIR</span>
-                                {% else %}
-                                    <span class="user-badge">PENGGUNA</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if user[2] == 0 %}
-                                    <!-- Make Admin Button -->
-                                    <form method="POST" action="{{ url_for('make_admin') }}" style="display: inline;">
-                                        <input type="hidden" name="user_id" value="{{ user[0] }}">
-                                        <button type="submit" class="btn btn-success">
-                                            ⬆️ Jadikan Pentadbir
-                                        </button>
-                                    </form>
-                                {% else %}
-                                    <!-- Remove Admin Button -->
-                                    <form method="POST" action="{{ url_for('remove_admin') }}" style="display: inline;">
-                                        <input type="hidden" name="user_id" value="{{ user[0] }}">
-                                        <button type="submit" class="btn btn-danger" 
-                                                {% if user[1] == session.username %}disabled title="Tidak boleh buang hak pentadbir sendiri"{% endif %}>
-                                            ⬇️ Buang Pentadbir
-                                        </button>
-                                    </form>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>Tiada pengguna dijumpai.</p>
-            {% endif %}
-        </div>
-        
-        <!-- Instructions Section -->
-        <div class="section">
-            <h2>📖 Arahan</h2>
-            <ul>
-                <li><strong>Cipta Pentadbir Baru:</strong> Gunakan borang di atas untuk mencipta akaun pentadbir baru terus</li>
-                <li><strong>Jadikan Pentadbir:</strong> Klik butang "Jadikan Pentadbir" untuk memberi hak pentadbir kepada pengguna biasa</li>
-                <li><strong>Buang Pentadbir:</strong> Klik butang "Buang Pentadbir" untuk menarik balik hak pentadbir (kecuali diri sendiri)</li>
-                <li><strong>Keselamatan:</strong> Hanya pentadbir yang boleh mengakses halaman ini dan menguruskan pengguna</li>
-            </ul>
-        </div>
+      </form>
     </div>
+
+    <div class="section">
+      <h2>All Users</h2>
+      {% if users %}
+      <table>
+        <thead><tr><th>ID</th><th>Username</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td style="color:#475569">{{ user[0] }}</td>
+            <td><strong style="color:#e2e8f0">{{ user[1] }}</strong></td>
+            <td>{% if user[2] == 1 %}<span class="badge-admin">ADMIN</span>{% else %}<span class="badge-user">USER</span>{% endif %}</td>
+            <td>
+              {% if user[2] == 0 %}
+                <form method="POST" action="{{ url_for('make_admin') }}" style="display:inline;">
+                  <input type="hidden" name="user_id" value="{{ user[0] }}">
+                  <button type="submit" class="btn btn-green btn-sm">Make Admin</button>
+                </form>
+              {% else %}
+                <form method="POST" action="{{ url_for('remove_admin') }}" style="display:inline;">
+                  <input type="hidden" name="user_id" value="{{ user[0] }}">
+                  <button type="submit" class="btn btn-red btn-sm"
+                    {% if user[1] == session.username %}disabled title="Cannot remove your own admin"{% endif %}>
+                    Remove Admin
+                  </button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}<p style="color:#334155;font-size:14px;">No users found.</p>{% endif %}
+    </div>
+
+    <div class="section">
+      <h2>Instructions</h2>
+      <ul class="instructions" style="padding-left:18px;">
+        <li><strong>Create New Admin:</strong> Use the form above to create a new admin account directly.</li>
+        <li><strong>Make Admin:</strong> Click "Make Admin" to grant admin rights to a regular user.</li>
+        <li><strong>Remove Admin:</strong> Click "Remove Admin" to revoke admin rights (cannot remove yourself).</li>
+        <li><strong>Security:</strong> Only admins can access this page.</li>
+      </ul>
+    </div>
+  </div>
+
 </body>
 </html>

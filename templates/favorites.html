@@ -1,21 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Favorites</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Favorites – Sarawak Dictionary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #060d1a; color: #e2e8f0; min-height: 100vh; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 58px; background: #0c1628; border-bottom: 1px solid #1a3152; }
+    .nav-brand { font-size: 17px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+    .btn-nav { padding: 6px 16px; font-size: 13px; font-weight: 500; border: 1px solid #1a3152; border-radius: 7px; background: transparent; color: #94a3b8; cursor: pointer; text-decoration: none; transition: border-color .2s, color .2s; }
+    .btn-nav:hover { border-color: #3b82f6; color: #60a5fa; }
+
+    .main { max-width: 800px; margin: 0 auto; padding: 36px 24px; }
+    h1 { font-size: 24px; font-weight: 700; color: #60a5fa; margin-bottom: 24px; }
+
+    .word-list { display: flex; flex-direction: column; gap: 12px; }
+    .word-card { background: #0c1628; border: 1px solid #1a3152; border-radius: 10px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .word-info strong { font-size: 16px; color: #e2e8f0; display: block; margin-bottom: 4px; }
+    .word-info .dialect { font-size: 12px; color: #60a5fa; margin-bottom: 4px; }
+    .word-info .definition { font-size: 13px; color: #64748b; }
+
+    .btn-remove { padding: 7px 14px; background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); border-radius: 7px; color: #fca5a5; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer; transition: background .2s; }
+    .btn-remove:hover { background: rgba(239,68,68,.2); }
+
+    .empty-state { text-align: center; padding: 60px; color: #334155; font-size: 15px; }
+    .empty-state a { color: #60a5fa; text-decoration: none; }
+    .empty-state a:hover { text-decoration: underline; }
+  </style>
 </head>
 <body>
-    <h2>Your Favorite Words</h2>
-    <ul>
-        {% for word in favorites %}
-        <li>
-            <strong>{{ word[1] }}</strong> ({{ word[3] }}) - {{ word[2] }}
-            <form action="{{ url_for('unfavorite', word_id=word[0]) }}" method="post" style="display:inline;">
-                <button type="submit">❌ Remove</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
-    <a href="/">← Back to Home</a>
+
+  <nav>
+    <a href="/" class="nav-brand">Sarawak Dictionary</a>
+    <a href="/" class="btn-nav">← Back to Dictionary</a>
+  </nav>
+
+  <div class="main">
+    <h1>My Favorite Words</h1>
+
+    {% if favorites %}
+    <div class="word-list">
+      {% for word in favorites %}
+      <div class="word-card">
+        <div class="word-info">
+          <strong>{{ word[1] }}</strong>
+          <div class="dialect">{{ word[3] }}</div>
+          <div class="definition">{{ word[2] }}</div>
+        </div>
+        <form action="{{ url_for('unfavorite', word_id=word[0]) }}" method="post">
+          <button type="submit" class="btn-remove">Remove</button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="empty-state">
+        No favorite words yet. <a href="/">Browse the dictionary</a> to add some.
+      </div>
+    {% endif %}
+  </div>
+
 </body>
 </html>

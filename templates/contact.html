@@ -1,170 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Hubungi Kami - Sarawak Dictionary</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us – Sarawak Dictionary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #060d1a; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #1f1c2c, #928dab);
-            color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-        }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 58px; background: #0c1628; border-bottom: 1px solid #1a3152; }
+    .nav-brand { font-size: 17px; font-weight: 700; color: #60a5fa; text-decoration: none; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { color: #64748b; text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 14px; transition: color .2s, background .2s; }
+    .nav-links a:hover, .nav-links a.active { color: #e2e8f0; background: #122040; }
 
-        .nav-buttons {
-            margin: 40px auto 20px auto;
-            text-align: center;
-        }
+    .page { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .card { width: 100%; max-width: 540px; background: #0c1628; border: 1px solid #1a3152; border-radius: 16px; padding: 40px 36px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .card-header { text-align: center; margin-bottom: 32px; }
+    .logo-icon { width: 52px; height: 52px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 24px; }
+    .card-header h2 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .card-header p { font-size: 14px; color: #475569; }
 
-        .nav-buttons a {
-            text-decoration: none;
-            margin: 0 10px;
-        }
+    .flash-ok { background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; color: #86efac; font-size: 14px; }
 
-        .nav-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        .btn-home {
-            background-color: #00d4ff;
-            color: #1f1c2c;
-        }
-
-        .btn-home:hover {
-            background-color: #00aacc;
-        }
-
-        .btn-quiz {
-            background-color: #facc15;
-            color: #1f1c2c;
-        }
-
-        .btn-quiz:hover {
-            background-color: #eab308;
-        }
-
-        .btn-fav {
-            background-color: #6b21a8;
-            color: #fff;
-        }
-
-        .btn-fav:hover {
-            background-color: #581c87;
-        }
-
-        .contact-container {
-            max-width: 600px;
-            margin: 0 auto 80px auto;
-            background-color: #1f1c2c;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        }
-
-        .contact-container h2 {
-            color: #facc15;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .contact-container label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .contact-container input,
-        .contact-container textarea {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 20px;
-            border: none;
-            border-radius: 10px;
-            background-color: #2d2a42;
-            color: #f5f5f5;
-            font-size: 16px;
-        }
-
-        .contact-container textarea {
-            resize: none;
-        }
-
-        .contact-container button[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            background-color: #facc15;
-            color: #1f1c2c;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .contact-container button[type="submit"]:hover {
-            background-color: #eab308;
-        }
-
-        .flash-message {
-            text-align: center;
-            background: #d1fae5;
-            color: #065f46;
-            padding: 12px;
-            margin-top: 30px;
-            margin-bottom: -40px;
-            border-left: 6px solid #10b981;
-            border-radius: 10px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: #94a3b8; margin-bottom: 8px; }
+    input[type="text"], input[type="email"], textarea { width: 100%; padding: 11px 14px; background: #0a1120; border: 1px solid #1a3152; border-radius: 8px; color: #e2e8f0; font-size: 14px; font-family: inherit; outline: none; transition: border-color .2s, box-shadow .2s; }
+    input:focus, textarea:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+    input::placeholder, textarea::placeholder { color: #1e3a5f; }
+    textarea { resize: vertical; min-height: 120px; }
+    button[type="submit"] { width: 100%; padding: 12px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background .2s; }
+    button[type="submit"]:hover { background: #2563eb; }
+  </style>
 </head>
 <body>
 
-    <!-- Butang navigasi atas -->
-    <div class="nav-buttons">
-        <a href="/"><button class="btn-home">Home</button></a>
-        <a href="/quiz"><button class="btn-quiz">Quiz</button></a>
-        <a href="/favourites"><button class="btn-fav">Favourites</button></a>
-    </div>
+  <nav>
+    <a href="/" class="nav-brand">Sarawak Dictionary</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/quiz">Quiz</a></li>
+      <li><a href="/contact" class="active">Contact</a></li>
+    </ul>
+  </nav>
 
-    <!-- Flash message -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="flash-message">{{ messages[0] }}</div>
-        {% endif %}
-    {% endwith %}
-
-    <!-- Borang Contact -->
-    <div class="contact-container">
+  <div class="page">
+    <div class="card">
+      <div class="card-header">
+        <div class="logo-icon">✉️</div>
         <h2>Contact Us</h2>
-        <form method="POST">
-            <label for="name">Name:</label>
-            <input type="text" name="name" id="name" required>
+        <p>Have a question or feedback? We'd love to hear from you.</p>
+      </div>
 
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" required>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash-ok">{{ messages[0] }}</div>
+        {% endif %}
+      {% endwith %}
 
-            <label for="message">Message:</label>
-            <textarea name="message" id="message" rows="5" required></textarea>
-
-            <button type="submit">Submit</button>
-        </form>
+      <form method="POST">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" name="name" id="name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" placeholder="Your email address" required>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea name="message" id="message" placeholder="Write your message here..." rows="5" required></textarea>
+        </div>
+        <button type="submit">Send Message</button>
+      </form>
     </div>
+  </div>
 
 </body>
 </html>
-
-
